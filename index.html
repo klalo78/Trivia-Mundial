@@ -13,7 +13,6 @@
         }
 
         body {
-            /* Imagen de fondo del juego */
             background: url('back.png') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
@@ -28,19 +27,17 @@
 
         /* Contenedor del Logo con movimiento */
         .logo-container {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
             z-index: 10;
         }
 
         .logo-img {
-            max-width: 180px;
+            max-width: 200px;
             height: auto;
-            /* Animación constante del logo */
             animation: floatAndTilt 4s ease-in-out infinite;
         }
 
-        /* Animación de balanceo y flotación sutil */
         @keyframes floatAndTilt {
             0% {
                 transform: translateY(0) rotate(0deg);
@@ -54,7 +51,7 @@
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.65); /* Fondo oscuro semitransparente para que resalte sobre back.png */
+            background: rgba(0, 0, 0, 0.65);
             backdrop-filter: blur(8px);
             border-radius: 15px;
             padding: 30px;
@@ -66,11 +63,48 @@
             z-index: 5;
         }
 
+        h2 {
+            font-size: 1.3rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #4facfe;
+            font-weight: 600;
+        }
+
         h1 {
-            font-size: 2.2rem;
-            margin-bottom: 25px;
+            font-size: 2rem;
+            margin-bottom: 20px;
             color: #4facfe;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Input para el código de acceso */
+        .input-codigo {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.4rem;
+            text-align: center;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+            font-weight: bold;
+        }
+
+        .input-codigo:focus {
+            outline: none;
+            border-color: #00c6ff;
+            box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+        }
+
+        .error-msg {
+            color: #ff4757;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            min-height: 20px;
         }
 
         .btn {
@@ -110,7 +144,7 @@
             display: none !important;
         }
 
-        /* Contador con forma de círculo */
+        /* Contador circular */
         .timer-circle {
             width: 80px;
             height: 80px;
@@ -150,8 +184,22 @@
             line-height: 1.6;
             margin-bottom: 20px;
             background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
+            font-size: 1.05rem;
+        }
+
+        .reglamento-texto p {
+            margin-bottom: 12px;
+        }
+
+        .reglamento-texto p:last-child {
+            margin-bottom: 0;
+        }
+
+        .destacado {
+            color: #ffd700;
+            font-weight: bold;
         }
 
         .feedback-text {
@@ -163,34 +211,44 @@
 </head>
 <body>
 
-    <!-- LOGO UBICADO ARRIBA Y VISIBLE EN TODO EL JUEGO -->
+    <!-- LOGO PRINCIPAL -->
     <div class="logo-container">
         <img src="logo.png" alt="Logo Trivia" class="logo-img">
     </div>
 
     <div class="container">
+        
+        <!-- PANTALLA: BLOQUEO POR CÓDIGO ACTUALIZADA -->
+        <div id="screen-gate">
+            <h2>Ingres&aacute; los n&uacute;meros que se encuentran debajo del c&oacute;digo QR en la caja</h2>
+            <input type="text" id="input-pass" class="input-codigo" placeholder="000000">
+            <div id="error-message" class="error-msg"></div>
+            <button class="btn btn-primary" onclick="validarCodigo()">ENTRAR</button>
+        </div>
+
         <!-- PANTALLA PRINCIPAL -->
-        <div id="screen-home">
-            <h1>?? Trivia Mundial</h1>
-            <button class="btn btn-primary" onclick="handleStartClick()">JUGAR</button>
+        <div id="screen-home" class="hidden">
+            <button class="btn btn-primary" onclick="handleStartClick()" style="margin-top: 10px;">JUGAR</button>
             <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
         <!-- PANTALLA REGLAMENTO -->
         <div id="screen-rules" class="hidden">
-            <h1>?? Reglamento</h1>
+            <h1>?? ¡Conseguí la cuarta antes que nadie!</h1>
             <div class="reglamento-texto">
-                <p>&bull; Al presionar JUGAR aparecer&aacute; una pregunta mundialista autom&aacute;ticamente.</p>
-                <p>&bull; Tendr&aacute;s un contador regresivo de 10 segundos en pantalla.</p>
-                <p>&bull; Deber&aacute;s elegir una de las 3 opciones antes de que el tiempo llegue a cero.</p>
-                <p>&bull; &iexcl;El que m&aacute;s sabe y m&aacute;s r&aacute;pido responde, gana!</p>
+                <p>• Necesitás un <span class="destacado">lápiz</span>, una <span class="destacado">hoja</span> y formar equipos de uno o más integrantes.</p>
+                <p>• Cada respuesta correcta es un punto.</p>
+                <p>• Cada 3 respuestas correctas (3 puntos) es una <span class="destacado">Copa del Mundo</span>.</p>
+                <p>• ¡El primero que llega a la cuarta gana!</p>
+                <p style="font-style: italic; color: #ccc; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    Y el que menos puntos o copas ganó... ¿Paga al ganador? ¿Lava los platos? Lo dejamos a tu criterio...
+                </p>
             </div>
             <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
         </div>
 
-        <!-- PANTALLA DE JUEGO (PREGUNTAS) -->
+        <!-- PANTALLA DE JUEGO -->
         <div id="screen-game" class="hidden">
-            <!-- Círculo del contador -->
             <div class="timer-circle" id="timer">10</div>
             <div class="question-text" id="question">&iquest;Pregunta?</div>
             <div id="options-container">
@@ -205,10 +263,12 @@
         </div>
     </div>
 
-    <!-- AUDIO DEL TICTAC -->
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
 
     <script>
+        // NUEVO CÓDIGO DE ACCESO NUMÉRICO
+        const CODIGO_ACCESO = '171078';
+
         const quizData = [
             {
                 question: "&iquest;A qu&eacute; edad debut&oacute; Messi en la selecci&oacute;n mayor Argentina?",
@@ -227,7 +287,35 @@
         let timeLeft = 10;
         const ticTacSound = document.getElementById('tictac-audio');
 
+        window.onload = function() {
+            if (sessionStorage.getItem('accesoPermitido') === 'true') {
+                showScreen('screen-home');
+            } else {
+                showScreen('screen-gate');
+            }
+        };
+
+        function validarCodigo() {
+            const inputVal = document.getElementById('input-pass').value.trim();
+            const errorDiv = document.getElementById('error-message');
+
+            if (inputVal === CODIGO_ACCESO) {
+                errorDiv.innerText = "";
+                sessionStorage.setItem('accesoPermitido', 'true');
+                showScreen('screen-home');
+            } else {
+                errorDiv.innerText = "Código incorrecto. ¡Seguí participando!";
+            }
+        }
+
+        document.getElementById('input-pass').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                validarCodigo();
+            }
+        });
+
         function showScreen(screenId) {
+            document.getElementById('screen-gate').classList.add('hidden');
             document.getElementById('screen-home').classList.add('hidden');
             document.getElementById('screen-rules').classList.add('hidden');
             document.getElementById('screen-game').classList.add('hidden');
@@ -277,10 +365,9 @@
             document.getElementById('timer').innerText = timeLeft;
             clearInterval(timerInterval);
             
-            // Iniciar reproducción del sonido tic-tac
             ticTacSound.currentTime = 0;
             ticTacSound.play().catch(error => {
-                console.log("El navegador bloqueó el audio momentáneamente hasta otra interacción:", error);
+                console.log("Audio en espera de interacción:", error);
             });
             
             timerInterval = setInterval(() => {
@@ -289,7 +376,7 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    ticTacSound.pause(); // Detener sonido
+                    ticTacSound.pause();
                     endQuestion(false, "&iexcl;Se acab&oacute; el tiempo! ??");
                 }
             }, 1000);
@@ -299,7 +386,7 @@
 
         function checkAnswer(selectedOption) {
             clearInterval(timerInterval);
-            ticTacSound.pause(); // Detener sonido inmediatamente al responder
+            ticTacSound.pause();
             
             if (selectedOption === currentQuestion.correct) {
                 endQuestion(true, "&iexcl;Correcto! ??");
