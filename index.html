@@ -20,6 +20,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow: hidden;
         }
 
         .container {
@@ -128,7 +129,7 @@
         <!-- PANTALLA PRINCIPAL -->
         <div id="screen-home">
             <h1>?? Trivia Mundial</h1>
-            <button class="btn btn-primary" onclick="startGame()">JUGAR</button>
+            <button class="btn btn-primary" onclick="handleStartClick()">JUGAR</button>
             <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
@@ -136,10 +137,10 @@
         <div id="screen-rules" class="hidden">
             <h1>?? Reglamento</h1>
             <div class="reglamento-texto">
-                <p>• Al presionar JUGAR aparecerá una pregunta mundialista automáticamente.</p>
-                <p>• Tendrás un contador regresivo de 10 segundos en pantalla.</p>
-                <p>• Deberás elegir una de las 3 opciones antes de que el tiempo llegue a cero.</p>
-                <p>• ¡El que más sabe y más rápido responde, gana!</p>
+                <p>&bull; Al presionar JUGAR aparecer&aacute; una pregunta mundialista autom&aacute;ticamente.</p>
+                <p>&bull; Tendr&aacute;s un contador regresivo de 10 segundos en pantalla.</p>
+                <p>&bull; Deber&aacute;s elegir una de las 3 opciones antes de que el tiempo llegue a cero.</p>
+                <p>&bull; &iexcl;El que m&aacute;s sabe y m&aacute;s r&aacute;pido responde, gana!</p>
             </div>
             <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
         </div>
@@ -147,9 +148,9 @@
         <!-- PANTALLA DE JUEGO (PREGUNTAS) -->
         <div id="screen-game" class="hidden">
             <div class="timer-box" id="timer">10</div>
-            <div class="question-text" id="question">¿Pregunta?</div>
+            <div class="question-text" id="question">&iquest;Pregunta?</div>
             <div id="options-container">
-                <!-- Los botones de opciones se cargan dinámicamente -->
+                <!-- Opciones dinámicas -->
             </div>
         </div>
 
@@ -161,15 +162,15 @@
     </div>
 
     <script>
-        // Base de datos de preguntas basada en tu estructura de 3 opciones
+        // Banco de preguntas con caracteres seguros (HTML Entities) para evitar fallos de codificación
         const quizData = [
             {
-                question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
-                correct: "18 años",
-                incorrect: ["17 años", "21 años"]
+                question: "&iquest;A qu&eacute; edad debut&oacute; Messi en la selecci&oacute;n mayor Argentina?",
+                correct: "18 a&ntilde;os",
+                incorrect: ["17 a&ntilde;os", "21 a&ntilde;os"]
             },
             {
-                question: "¿Qué selección ganó el Mundial de Qatar 2022?",
+                question: "&iquest;Qu&eacute; selecci&oacute;n gan&oacute; el Mundial de Qatar 2022?",
                 correct: "Argentina",
                 incorrect: ["Francia", "Croacia"]
             }
@@ -179,7 +180,7 @@
         let timerInterval;
         let timeLeft = 10;
 
-        // Función para cambiar de pantallas de forma limpia
+        // Función para alternar pantallas
         function showScreen(screenId) {
             document.getElementById('screen-home').classList.add('hidden');
             document.getElementById('screen-rules').classList.add('hidden');
@@ -189,31 +190,47 @@
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        // Iniciar el juego e ir directo a la pregunta
+        // Activa la pantalla completa y luego inicia el juego
+        function handleStartClick() {
+            requestFullScreen(document.documentElement);
+            startGame();
+        }
+
+        // Lógica multiplataforma para pantalla completa
+        function requestFullScreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) { /* Firefox */
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) { /* Chrome, Safari y Opera */
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) { /* IE/Edge */
+                element.msRequestFullscreen();
+            }
+        }
+
+        // Iniciar juego y lanzar pregunta
         function startGame() {
-            // Selecciona una pregunta al azar de la lista
             const randomIndex = Math.floor(Math.random() * quizData.length);
             currentQuestion = quizData[randomIndex];
             
-            // Renderizar pregunta y opciones mezcladas
-            document.getElementById('question').innerText = currentQuestion.question;
+            // Usamos innerHTML para interpretar correctamente los códigos de acentos y eñes
+            document.getElementById('question').innerHTML = currentQuestion.question;
             
             const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = ''; // Limpiar opciones anteriores
+            optionsContainer.innerHTML = ''; 
 
-            // Unir y mezclar las respuestas para que la correcta no quede siempre en el mismo lugar
             const allOptions = [currentQuestion.correct, ...currentQuestion.incorrect];
             allOptions.sort(() => Math.random() - 0.5);
 
             allOptions.forEach(option => {
                 const button = document.createElement('button');
-                button.innerText = option;
+                button.innerHTML = option;
                 button.className = 'btn option-btn';
                 button.onclick = () => checkAnswer(option);
                 optionsContainer.appendChild(button);
             });
 
-            // Configurar y arrancar el temporizador
             timeLeft = 10;
             document.getElementById('timer').innerText = timeLeft;
             clearInterval(timerInterval);
@@ -224,27 +241,30 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    endQuestion(false, "¡Se acabó el tiempo! ??");
+                    endQuestion(false, "&iexcl;Se acab&oacute; el tiempo! &??");
                 }
             }, 1000);
 
             showScreen('screen-game');
         }
 
-        // Verificar la respuesta del usuario antes de que termine el tiempo
         function checkAnswer(selectedOption) {
             clearInterval(timerInterval);
             if (selectedOption === currentQuestion.correct) {
-                endQuestion(true, "¡Correcto! ??");
+                endQuestion(true, "&iexcl;Correcto! &??");
             } else {
-                endQuestion(false, `Incorrecto... ? La respuesta era ${currentQuestion.correct}`);
+                // Para mostrar la respuesta correcta de forma segura en el mensaje de error
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = currentQuestion.correct;
+                const safeCorrectText = tempDiv.innerText;
+                
+                endQuestion(false, `Incorrecto... &#10060; La respuesta era ${safeCorrectText}`);
             }
         }
 
-        // Mostrar el resultado de la ronda
         function endQuestion(isWin, message) {
             const feedbackMsg = document.getElementById('feedback-msg');
-            feedbackMsg.innerText = message;
+            feedbackMsg.innerHTML = message;
             feedbackMsg.style.color = isWin ? "#4cd137" : "#ff4757";
             showScreen('screen-feedback');
         }
