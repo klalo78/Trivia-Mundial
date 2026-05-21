@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -27,58 +27,57 @@
 
         /* Contenedor del Logo con movimiento */
         .logo-container {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             text-align: center;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         .logo-img {
-            max-width: 200px;
+            max-width: 160px;
             height: auto;
             animation: floatAndTilt 4s ease-in-out infinite;
         }
 
         @keyframes floatAndTilt {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-8px) rotate(3deg);
-            }
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(8px);
             border-radius: 15px;
-            padding: 30px;
+            padding: 25px;
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
             text-align: center;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 5;
+            max-height: 75vh; /* Evita que el contenedor pise los bordes de la pantalla */
+            display: flex;
+            flex-direction: column;
         }
 
         h2 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             line-height: 1.5;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #4facfe;
             font-weight: 600;
         }
 
         h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
             color: #4facfe;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            flex-shrink: 0;
         }
 
-        /* Input para el c�digo de acceso */
+        /* Input para el código de acceso */
         .input-codigo {
             width: 100%;
             padding: 12px;
@@ -110,14 +109,15 @@
         .btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin: 12px 0;
+            padding: 14px;
+            margin: 8px 0;
             border: none;
             border-radius: 8px;
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .btn-primary {
@@ -144,49 +144,26 @@
             display: none !important;
         }
 
-        /* Contador circular */
-        .timer-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 4px solid #ff4757;
-            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #ff4757;
-            margin: 0 auto 25px auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .question-text {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .option-btn {
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        .option-btn:hover {
-            background: #fff;
-            transform: translateX(5px);
-        }
-
+        /* Caja de Reglamento con Scroll Interno */
         .reglamento-texto {
             text-align: left;
             line-height: 1.6;
-            margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
             border-radius: 8px;
-            font-size: 1.05rem;
+            font-size: 1rem;
+            overflow-y: auto; /* Activa el scroll vertical si el texto rebalsa */
+            max-height: 35vh; /* Límite de altura para obligar al scroll */
+        }
+
+        /* Personalización de la barra de scroll para que quede linda */
+        .reglamento-texto::-webkit-scrollbar {
+            width: 6px;
+        }
+        .reglamento-texto::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
         }
 
         .reglamento-texto p {
@@ -202,8 +179,49 @@
             font-weight: bold;
         }
 
+        /* Contador circular */
+        .timer-circle {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            border: 4px solid #ff4757;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4757;
+            margin: 0 auto 20px auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            overflow-y: auto;
+        }
+
+        #options-container {
+            overflow-y: auto;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .option-btn:hover {
+            background: #fff;
+            transform: translateX(5px);
+        }
+
         .feedback-text {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -213,14 +231,14 @@
 
     <!-- LOGO PRINCIPAL -->
     <div class="logo-container">
-        <img src="logo.png" alt="Logo Trivia" class="logo-img">
+        <img src="logo.png" alt="Logo" class="logo-img">
     </div>
 
     <div class="container">
         
-        <!-- PANTALLA: BLOQUEO POR C�DIGO ACTUALIZADA -->
+        <!-- PANTALLA: BLOQUEO POR CÓDIGO -->
         <div id="screen-gate">
-            <h2>Ingres&aacute; los n&uacute;meros que se encuentran debajo del c&oacute;digo QR en la caja</h2>
+            <h2>Ingresa los números que se encuentran debajo del código QR en la caja</h2>
             <input type="text" id="input-pass" class="input-codigo" placeholder="000000">
             <div id="error-message" class="error-msg"></div>
             <button class="btn btn-primary" onclick="validarCodigo()">ENTRAR</button>
@@ -232,16 +250,16 @@
             <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
-        <!-- PANTALLA REGLAMENTO -->
+        <!-- PANTALLA REGLAMENTO (Con Scroll) -->
         <div id="screen-rules" class="hidden">
-            <h1>?? �Consegu� la cuarta antes que nadie!</h1>
+            <h1>🏆 ¡Conseguí la cuarta!</h1>
             <div class="reglamento-texto">
-                <p>� Necesit�s un <span class="destacado">l�piz</span>, una <span class="destacado">hoja</span> y formar equipos de uno o m�s integrantes.</p>
-                <p>� Cada respuesta correcta es un punto.</p>
-                <p>� Cada 3 respuestas correctas (3 puntos) es una <span class="destacado">Copa del Mundo</span>.</p>
-                <p>� �El primero que llega a la cuarta gana!</p>
+                <p>• Necesitás un <span class="destacado">lápiz</span>, una <span class="destacado">hoja</span> y formar equipos de uno o más integrantes.</p>
+                <p>• Cada respuesta correcta es un punto.</p>
+                <p>• Cada 3 respuestas correctas (3 puntos) es una <span class="destacado">Copa del Mundo</span>.</p>
+                <p>• ¡El primero que llega a la cuarta gana!</p>
                 <p style="font-style: italic; color: #ccc; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                    Y el que menos puntos o copas gan�... �Paga al ganador? �Lava los platos? Lo dejamos a tu criterio...
+                    Y el que menos puntos o copas ganó... ¿Paga al ganador? ¿Lava los platos? Lo dejamos a tu criterio...
                 </p>
             </div>
             <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
@@ -250,9 +268,9 @@
         <!-- PANTALLA DE JUEGO -->
         <div id="screen-game" class="hidden">
             <div class="timer-circle" id="timer">10</div>
-            <div class="question-text" id="question">&iquest;Pregunta?</div>
+            <div class="question-text" id="question">Cargando...</div>
             <div id="options-container">
-                <!-- Opciones din�micas -->
+                <!-- Opciones dinámicas -->
             </div>
         </div>
 
@@ -266,17 +284,18 @@
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
 
     <script>
-        // NUEVO C�DIGO DE ACCESO NUM�RICO
+        // Clave numérica exacta
         const CODIGO_ACCESO = '171078';
 
+        // Base de datos escrita con textos limpios
         const quizData = [
             {
-                question: "&iquest;A qu&eacute; edad debut&oacute; Messi en la selecci&oacute;n mayor Argentina?",
-                correct: "18 a&ntilde;os",
-                incorrect: ["17 a&ntilde;os", "21 a&ntilde;os"]
+                question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
+                correct: "18 años",
+                incorrect: ["17 años", "21 años"]
             },
             {
-                question: "&iquest;Qu&eacute; selecci&oacute;n gan&oacute; el Mundial de Qatar 2022?",
+                question: "¿Qué selección ganó el Mundial de Qatar 2022?",
                 correct: "Argentina",
                 incorrect: ["Francia", "Croacia"]
             }
@@ -304,7 +323,7 @@
                 sessionStorage.setItem('accesoPermitido', 'true');
                 showScreen('screen-home');
             } else {
-                errorDiv.innerText = "C�digo incorrecto. �Segu� participando!";
+                errorDiv.innerText = "Código incorrecto. ¡Seguí participando!";
             }
         }
 
@@ -345,7 +364,8 @@
             const randomIndex = Math.floor(Math.random() * quizData.length);
             currentQuestion = quizData[randomIndex];
             
-            document.getElementById('question').innerHTML = currentQuestion.question;
+            // Forzamos texto plano textContent para blindar los caracteres ante problemas de codificación del navegador
+            document.getElementById('question').textContent = currentQuestion.question;
             
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = ''; 
@@ -355,7 +375,7 @@
 
             allOptions.forEach(option => {
                 const button = document.createElement('button');
-                button.innerHTML = option;
+                button.textContent = option; // Seguro contra fallas de acentos
                 button.className = 'btn option-btn';
                 button.onclick = () => checkAnswer(option);
                 optionsContainer.appendChild(button);
@@ -366,9 +386,7 @@
             clearInterval(timerInterval);
             
             ticTacSound.currentTime = 0;
-            ticTacSound.play().catch(error => {
-                console.log("Audio en espera de interacci�n:", error);
-            });
+            ticTacSound.play().catch(error => console.log("Audio esperando acción:", error));
             
             timerInterval = setInterval(() => {
                 timeLeft--;
@@ -377,7 +395,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     ticTacSound.pause();
-                    endQuestion(false, "&iexcl;Se acab&oacute; el tiempo! ??");
+                    endQuestion(false, "¡Se acabó el tiempo! ⏱️");
                 }
             }, 1000);
 
@@ -389,19 +407,15 @@
             ticTacSound.pause();
             
             if (selectedOption === currentQuestion.correct) {
-                endQuestion(true, "&iexcl;Correcto! ??");
+                endQuestion(true, "¡Correcto! 🌟");
             } else {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = currentQuestion.correct;
-                const safeCorrectText = tempDiv.innerText;
-                
-                endQuestion(false, `Incorrecto... &#10060; La respuesta era ${safeCorrectText}`);
+                endQuestion(false, "Incorrecto... ❌ La respuesta era " + currentQuestion.correct);
             }
         }
 
         function endQuestion(isWin, message) {
             const feedbackMsg = document.getElementById('feedback-msg');
-            feedbackMsg.innerHTML = message;
+            feedbackMsg.textContent = message;
             feedbackMsg.style.color = isWin ? "#4cd137" : "#ff4757";
             showScreen('screen-feedback');
         }
