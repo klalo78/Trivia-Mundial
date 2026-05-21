@@ -13,9 +13,12 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            /* Imagen de fondo del juego */
+            background: url('back.png') no-repeat center center fixed;
+            background-size: cover;
             color: #fff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -23,16 +26,44 @@
             overflow: hidden;
         }
 
+        /* Contenedor del Logo con movimiento */
+        .logo-container {
+            margin-bottom: 20px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .logo-img {
+            max-width: 180px;
+            height: auto;
+            /* Animación constante del logo */
+            animation: floatAndTilt 4s ease-in-out infinite;
+        }
+
+        /* Animación de balanceo y flotación sutil */
+        @keyframes floatAndTilt {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-8px) rotate(3deg);
+            }
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.65); /* Fondo oscuro semitransparente para que resalte sobre back.png */
+            backdrop-filter: blur(8px);
             border-radius: 15px;
             padding: 30px;
             width: 100%;
             max-width: 500px;
             text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 5;
         }
 
         h1 {
@@ -79,13 +110,21 @@
             display: none !important;
         }
 
-        /* Estilos de la pantalla de juego */
-        .timer-box {
-            font-size: 2.5rem;
+        /* Contador con forma de círculo */
+        .timer-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #ff4757;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
             font-weight: bold;
             color: #ff4757;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+            margin: 0 auto 25px auto;
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .question-text {
@@ -106,12 +145,11 @@
             transform: translateX(5px);
         }
 
-        /* Reglamento y Feedback */
         .reglamento-texto {
             text-align: left;
             line-height: 1.6;
             margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             padding: 15px;
             border-radius: 8px;
         }
@@ -124,6 +162,11 @@
     </style>
 </head>
 <body>
+
+    <!-- LOGO UBICADO ARRIBA Y VISIBLE EN TODO EL JUEGO -->
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo Trivia" class="logo-img">
+    </div>
 
     <div class="container">
         <!-- PANTALLA PRINCIPAL -->
@@ -147,7 +190,8 @@
 
         <!-- PANTALLA DE JUEGO (PREGUNTAS) -->
         <div id="screen-game" class="hidden">
-            <div class="timer-box" id="timer">10</div>
+            <!-- Círculo del contador -->
+            <div class="timer-circle" id="timer">10</div>
             <div class="question-text" id="question">&iquest;Pregunta?</div>
             <div id="options-container">
                 <!-- Opciones dinámicas -->
@@ -161,8 +205,10 @@
         </div>
     </div>
 
+    <!-- AUDIO DEL TICTAC -->
+    <audio id="tictac-audio" src="tictac.mp3" loop></audio>
+
     <script>
-        // Banco de preguntas con caracteres seguros (HTML Entities) para evitar fallos de codificación
         const quizData = [
             {
                 question: "&iquest;A qu&eacute; edad debut&oacute; Messi en la selecci&oacute;n mayor Argentina?",
@@ -179,8 +225,8 @@
         let currentQuestion;
         let timerInterval;
         let timeLeft = 10;
+        const ticTacSound = document.getElementById('tictac-audio');
 
-        // Función para alternar pantallas
         function showScreen(screenId) {
             document.getElementById('screen-home').classList.add('hidden');
             document.getElementById('screen-rules').classList.add('hidden');
@@ -190,31 +236,27 @@
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        // Activa la pantalla completa y luego inicia el juego
         function handleStartClick() {
             requestFullScreen(document.documentElement);
             startGame();
         }
 
-        // Lógica multiplataforma para pantalla completa
         function requestFullScreen(element) {
             if (element.requestFullscreen) {
                 element.requestFullscreen();
-            } else if (element.mozRequestFullScreen) { /* Firefox */
+            } else if (element.mozRequestFullScreen) {
                 element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullscreen) { /* Chrome, Safari y Opera */
+            } else if (element.webkitRequestFullscreen) {
                 element.webkitRequestFullscreen();
-            } else if (element.msRequestFullscreen) { /* IE/Edge */
+            } else if (element.msRequestFullscreen) {
                 element.msRequestFullscreen();
             }
         }
 
-        // Iniciar juego y lanzar pregunta
         function startGame() {
             const randomIndex = Math.floor(Math.random() * quizData.length);
             currentQuestion = quizData[randomIndex];
             
-            // Usamos innerHTML para interpretar correctamente los códigos de acentos y eñes
             document.getElementById('question').innerHTML = currentQuestion.question;
             
             const optionsContainer = document.getElementById('options-container');
@@ -235,13 +277,20 @@
             document.getElementById('timer').innerText = timeLeft;
             clearInterval(timerInterval);
             
+            // Iniciar reproducción del sonido tic-tac
+            ticTacSound.currentTime = 0;
+            ticTacSound.play().catch(error => {
+                console.log("El navegador bloqueó el audio momentáneamente hasta otra interacción:", error);
+            });
+            
             timerInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById('timer').innerText = timeLeft;
                 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    endQuestion(false, "&iexcl;Se acab&oacute; el tiempo! &??");
+                    ticTacSound.pause(); // Detener sonido
+                    endQuestion(false, "&iexcl;Se acab&oacute; el tiempo! ??");
                 }
             }, 1000);
 
@@ -250,10 +299,11 @@
 
         function checkAnswer(selectedOption) {
             clearInterval(timerInterval);
+            ticTacSound.pause(); // Detener sonido inmediatamente al responder
+            
             if (selectedOption === currentQuestion.correct) {
-                endQuestion(true, "&iexcl;Correcto! &??");
+                endQuestion(true, "&iexcl;Correcto! ??");
             } else {
-                // Para mostrar la respuesta correcta de forma segura en el mensaje de error
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = currentQuestion.correct;
                 const safeCorrectText = tempDiv.innerText;
