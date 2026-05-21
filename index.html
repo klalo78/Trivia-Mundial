@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Mundialista</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: #4facfe;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Estilos de la pantalla de juego */
+        .timer-box {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff4757;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .option-btn:hover {
+            background: #fff;
+            transform: translateX(5px);
+        }
+
+        /* Reglamento y Feedback */
+        .reglamento-texto {
+            text-align: left;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .feedback-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- PANTALLA PRINCIPAL -->
+        <div id="screen-home">
+            <h1>?? Trivia Mundial</h1>
+            <button class="btn btn-primary" onclick="startGame()">JUGAR</button>
+            <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
+        </div>
+
+        <!-- PANTALLA REGLAMENTO -->
+        <div id="screen-rules" class="hidden">
+            <h1>?? Reglamento</h1>
+            <div class="reglamento-texto">
+                <p>• Al presionar JUGAR aparecerá una pregunta mundialista automáticamente.</p>
+                <p>• Tendrás un contador regresivo de 10 segundos en pantalla.</p>
+                <p>• Deberás elegir una de las 3 opciones antes de que el tiempo llegue a cero.</p>
+                <p>• ¡El que más sabe y más rápido responde, gana!</p>
+            </div>
+            <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
+        </div>
+
+        <!-- PANTALLA DE JUEGO (PREGUNTAS) -->
+        <div id="screen-game" class="hidden">
+            <div class="timer-box" id="timer">10</div>
+            <div class="question-text" id="question">¿Pregunta?</div>
+            <div id="options-container">
+                <!-- Los botones de opciones se cargan dinámicamente -->
+            </div>
+        </div>
+
+        <!-- PANTALLA RESULTADO DE PREGUNTA -->
+        <div id="screen-feedback" class="hidden">
+            <div class="feedback-text" id="feedback-msg"></div>
+            <button class="btn btn-primary" onclick="showScreen('screen-home')">Volver a Jugar</button>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos de preguntas basada en tu estructura de 3 opciones
+        const quizData = [
+            {
+                question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
+                correct: "18 años",
+                incorrect: ["17 años", "21 años"]
+            },
+            {
+                question: "¿Qué selección ganó el Mundial de Qatar 2022?",
+                correct: "Argentina",
+                incorrect: ["Francia", "Croacia"]
+            }
+        ];
+
+        let currentQuestion;
+        let timerInterval;
+        let timeLeft = 10;
+
+        // Función para cambiar de pantallas de forma limpia
+        function showScreen(screenId) {
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-rules').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-feedback').classList.add('hidden');
+
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        // Iniciar el juego e ir directo a la pregunta
+        function startGame() {
+            // Selecciona una pregunta al azar de la lista
+            const randomIndex = Math.floor(Math.random() * quizData.length);
+            currentQuestion = quizData[randomIndex];
+            
+            // Renderizar pregunta y opciones mezcladas
+            document.getElementById('question').innerText = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; // Limpiar opciones anteriores
+
+            // Unir y mezclar las respuestas para que la correcta no quede siempre en el mismo lugar
+            const allOptions = [currentQuestion.correct, ...currentQuestion.incorrect];
+            allOptions.sort(() => Math.random() - 0.5);
+
+            allOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.className = 'btn option-btn';
+                button.onclick = () => checkAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+
+            // Configurar y arrancar el temporizador
+            timeLeft = 10;
+            document.getElementById('timer').innerText = timeLeft;
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endQuestion(false, "¡Se acabó el tiempo! ??");
+                }
+            }, 1000);
+
+            showScreen('screen-game');
+        }
+
+        // Verificar la respuesta del usuario antes de que termine el tiempo
+        function checkAnswer(selectedOption) {
+            clearInterval(timerInterval);
+            if (selectedOption === currentQuestion.correct) {
+                endQuestion(true, "¡Correcto! ??");
+            } else {
+                endQuestion(false, `Incorrecto... ? La respuesta era ${currentQuestion.correct}`);
+            }
+        }
+
+        // Mostrar el resultado de la ronda
+        function endQuestion(isWin, message) {
+            const feedbackMsg = document.getElementById('feedback-msg');
+            feedbackMsg.innerText = message;
+            feedbackMsg.style.color = isWin ? "#4cd137" : "#ff4757";
+            showScreen('screen-feedback');
+        }
+    </script>
+</body>
+</html>
