@@ -17,7 +17,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            /* Aplicamos la nueva tipografía a todo el proyecto */
             font-family: 'Super Sunkissed', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -34,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* Contenedor del Logo con movimiento */
+        /* Contenedor del Logo con movimiento - Agrandado un 20% (de 160px a 192px) */
         .logo-container {
             margin-bottom: 15px;
             text-align: center;
@@ -43,7 +42,7 @@
         }
 
         .logo-img {
-            max-width: 160px;
+            max-width: 192px; /* Incrementado un 20% para mayor impacto visual */
             height: auto;
             animation: floatAndTilt 4s ease-in-out infinite;
         }
@@ -87,7 +86,6 @@
             font-weight: normal;
         }
 
-        /* Input para el código de acceso */
         .input-codigo {
             width: 100%;
             padding: 12px;
@@ -150,11 +148,25 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        .btn-restart {
+            background: none;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            font-size: 1rem;
+            padding: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-restart:hover {
+            color: #fff;
+            background: rgba(255, 71, 87, 0.2);
+            border-color: #ff4757;
+        }
+
         .hidden {
             display: none !important;
         }
 
-        /* Caja de Reglamento con Scroll Interno */
         .reglamento-texto {
             text-align: left;
             line-height: 1.6;
@@ -175,19 +187,10 @@
             border-radius: 4px;
         }
 
-        .reglamento-texto p {
-            margin-bottom: 12px;
-        }
-
-        .reglamento-texto p:last-child {
-            margin-bottom: 0;
-        }
-
         .destacado {
             color: #ffd700;
         }
 
-        /* Contador circular */
         .timer-circle {
             width: 75px;
             height: 75px;
@@ -230,12 +233,13 @@
         .feedback-text {
             font-size: 1.6rem;
             margin-bottom: 20px;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <!-- LOGO PRINCIPAL -->
+    <!-- LOGO PRINCIPAL (AGRANDADO UN 20%) -->
     <div class="logo-container">
         <img src="logo.png" alt="Logo" class="logo-img">
     </div>
@@ -256,7 +260,7 @@
             <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
-        <!-- PANTALLA REGLAMENTO (Con Scroll) -->
+        <!-- PANTALLA REGLAMENTO -->
         <div id="screen-rules" class="hidden">
             <h1>🏆 ¡Conseguí la cuarta!</h1>
             <div class="reglamento-texto">
@@ -283,51 +287,61 @@
         <!-- PANTALLA RESULTADO DE PREGUNTA -->
         <div id="screen-feedback" class="hidden">
             <div class="feedback-text" id="feedback-msg"></div>
-            <button class="btn btn-primary" onclick="showScreen('screen-home')">Volver a Jugar</button>
+            
+            <button id="btn-next" class="btn btn-primary" onclick="proximaPregunta()">SIGUIENTE PREGUNTA</button>
+            
+            <button class="btn btn-restart" onclick="reiniciarJuegoCompleto()">Reiniciar Juego Completo</button>
         </div>
     </div>
 
     <!-- REPRODUCTORES DE AUDIO -->
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
     <audio id="pitido-audio" src="pitido.mp3"></audio>
+    <audio id="mal-audio" src="mal.mp3"></audio> <!-- Nuevo sonido de error -->
 
     <script>
         const CODIGO_ACCESO = '171078';
 
-        // Base de datos de preguntas actualizada con tus nuevas opciones
         const quizData = [
             {
+                id: 1,
                 question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
                 correct: "18 años",
                 incorrect: ["17 años", "21 años"]
             },
             {
+                id: 2,
                 question: "¿Qué selección ganó el Mundial de Qatar 2022?",
                 correct: "Argentina",
                 incorrect: ["Francia", "Croacia"]
             },
             {
+                id: 3,
                 question: "¿Cuál fue el equipo rival de Argentina en la final del mundial de 1978?",
                 correct: "Países Bajos",
                 incorrect: ["Italia", "Alemania"]
             },
             {
+                id: 4,
                 question: "¿Cuántas veces Argentina salió subcampeón en la copa mundial?",
                 correct: "3",
                 incorrect: ["2", "4"]
             },
             {
+                id: 5,
                 question: "¿Cómo se llaman los hijos de Messi?",
                 correct: "Thiago, Mateo y Ciro",
                 incorrect: ["Thiago, Mauro y Ciro", "Thiago, Marcos y Ciro"]
             }
         ];
 
+        let preguntasJugadas = []; 
         let currentQuestion;
         let timerInterval;
         let timeLeft = 10;
         const ticTacSound = document.getElementById('tictac-audio');
         const pitidoSound = document.getElementById('pitido-audio');
+        const malSound = document.getElementById('mal-audio');
 
         window.onload = function() {
             if (sessionStorage.getItem('accesoPermitido') === 'true') {
@@ -366,13 +380,19 @@
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        // Se acciona al tocar JUGAR: reproduce el pitido e inicia el partido
         function handleStartClick() {
             pitidoSound.currentTime = 0;
-            pitidoSound.play().catch(error => console.log("Fallo audio inicial:", error));
+            pitidoSound.play().catch(error => console.log("Audio desactivado:", error));
             
             requestFullScreen(document.documentElement);
-            startGame();
+            preguntasJugadas = []; 
+            lanzarPregunta();
+        }
+
+        function proximaPregunta() {
+            pitidoSound.currentTime = 0;
+            pitidoSound.play().catch(error => console.log("Audio desactivado:", error));
+            lanzarPregunta();
         }
 
         function requestFullScreen(element) {
@@ -387,11 +407,25 @@
             }
         }
 
-        function startGame() {
-            const randomIndex = Math.floor(Math.random() * quizData.length);
-            currentQuestion = quizData[randomIndex];
+        function lanzarPregunta() {
+            const preguntasDisponibles = quizData.filter(q => !preguntasJugadas.includes(q.id));
+
+            if (preguntasDisponibles.length === 0) {
+                const feedbackMsg = document.getElementById('feedback-msg');
+                feedbackMsg.innerHTML = "🏁 ¡Final del partido!<br>Se terminaron las preguntas de la caja.";
+                feedbackMsg.style.color = "#ffffff"; 
+                document.getElementById('btn-next').classList.add('hidden'); 
+                showScreen('screen-feedback');
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * preguntasDisponibles.length);
+            currentQuestion = preguntasDisponibles[randomIndex];
             
+            preguntasJugadas.push(currentQuestion.id);
+
             document.getElementById('question').textContent = currentQuestion.question;
+            document.getElementById('btn-next').classList.remove('hidden'); 
             
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = ''; 
@@ -421,6 +455,9 @@
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     ticTacSound.pause();
+                    // Suena el archivo mal.mp3 cuando se agota el tiempo
+                    malSound.currentTime = 0;
+                    malSound.play().catch(error => console.log("Audio desactivado:", error));
                     endQuestion(false, "¡Se acabó el tiempo! ⏱️");
                 }
             }, 1000);
@@ -435,6 +472,9 @@
             if (selectedOption === currentQuestion.correct) {
                 endQuestion(true, "¡Correcto! 🌟");
             } else {
+                // Suena el archivo mal.mp3 si la respuesta es incorrecta
+                malSound.currentTime = 0;
+                malSound.play().catch(error => console.log("Audio desactivado:", error));
                 endQuestion(false, "Incorrecto... ❌ La respuesta era " + currentQuestion.correct);
             }
         }
@@ -442,8 +482,13 @@
         function endQuestion(isWin, message) {
             const feedbackMsg = document.getElementById('feedback-msg');
             feedbackMsg.textContent = message;
-            feedbackMsg.style.color = isWin ? "#4cd137" : "#ff4757";
+            feedbackMsg.style.color = isWin ? "#4cd137" : "#ffffff";
             showScreen('screen-feedback');
+        }
+
+        function reiniciarJuegoCompleto() {
+            preguntasJugadas = [];
+            showScreen('screen-home');
         }
     </script>
 </body>
