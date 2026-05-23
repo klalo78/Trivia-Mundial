@@ -5,11 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trivia Mundialista</title>
     <style>
+        /* Carga de la tipografía personalizada */
+        @font-face {
+            font-family: 'Super Sunkissed';
+            src: url('Super Sunkissed.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Aplicamos la nueva tipografía a todo el proyecto */
+            font-family: 'Super Sunkissed', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -56,32 +65,33 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 5;
-            max-height: 75vh; /* Evita que el contenedor pise los bordes de la pantalla */
+            max-height: 75vh;
             display: flex;
             flex-direction: column;
         }
 
         h2 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             line-height: 1.5;
             margin-bottom: 15px;
             color: #4facfe;
-            font-weight: 600;
+            font-weight: normal;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 15px;
             color: #4facfe;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             flex-shrink: 0;
+            font-weight: normal;
         }
 
         /* Input para el código de acceso */
         .input-codigo {
             width: 100%;
             padding: 12px;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             text-align: center;
             border-radius: 8px;
             border: 2px solid rgba(255, 255, 255, 0.2);
@@ -89,7 +99,7 @@
             color: #fff;
             margin-bottom: 10px;
             letter-spacing: 4px;
-            font-weight: bold;
+            font-family: inherit;
         }
 
         .input-codigo:focus {
@@ -101,7 +111,7 @@
         .error-msg {
             color: #ff4757;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 1rem;
             margin-bottom: 10px;
             min-height: 20px;
         }
@@ -113,11 +123,11 @@
             margin: 8px 0;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: all 0.2s ease;
             flex-shrink: 0;
+            font-family: inherit;
         }
 
         .btn-primary {
@@ -152,12 +162,11 @@
             background: rgba(0, 0, 0, 0.4);
             padding: 15px;
             border-radius: 8px;
-            font-size: 1rem;
-            overflow-y: auto; /* Activa el scroll vertical si el texto rebalsa */
-            max-height: 35vh; /* Límite de altura para obligar al scroll */
+            font-size: 1.1rem;
+            overflow-y: auto;
+            max-height: 35vh;
         }
 
-        /* Personalización de la barra de scroll para que quede linda */
         .reglamento-texto::-webkit-scrollbar {
             width: 6px;
         }
@@ -176,7 +185,6 @@
 
         .destacado {
             color: #ffd700;
-            font-weight: bold;
         }
 
         /* Contador circular */
@@ -189,8 +197,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 2.2rem;
             color: #ff4757;
             margin: 0 auto 20px auto;
             background-color: rgba(0, 0, 0, 0.4);
@@ -198,7 +205,7 @@
         }
 
         .question-text {
-            font-size: 1.25rem;
+            font-size: 1.4rem;
             margin-bottom: 20px;
             line-height: 1.5;
             overflow-y: auto;
@@ -221,8 +228,7 @@
         }
 
         .feedback-text {
-            font-size: 1.4rem;
-            font-weight: bold;
+            font-size: 1.6rem;
             margin-bottom: 20px;
         }
     </style>
@@ -281,13 +287,14 @@
         </div>
     </div>
 
+    <!-- REPRODUCTORES DE AUDIO -->
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
+    <audio id="pitido-audio" src="pitido.mp3"></audio>
 
     <script>
-        // Clave numérica exacta
         const CODIGO_ACCESO = '171078';
 
-        // Base de datos escrita con textos limpios
+        // Base de datos de preguntas actualizada con tus nuevas opciones
         const quizData = [
             {
                 question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
@@ -298,6 +305,21 @@
                 question: "¿Qué selección ganó el Mundial de Qatar 2022?",
                 correct: "Argentina",
                 incorrect: ["Francia", "Croacia"]
+            },
+            {
+                question: "¿Cuál fue el equipo rival de Argentina en la final del mundial de 1978?",
+                correct: "Países Bajos",
+                incorrect: ["Italia", "Alemania"]
+            },
+            {
+                question: "¿Cuántas veces Argentina salió subcampeón en la copa mundial?",
+                correct: "3",
+                incorrect: ["2", "4"]
+            },
+            {
+                question: "¿Cómo se llaman los hijos de Messi?",
+                correct: "Thiago, Mateo y Ciro",
+                incorrect: ["Thiago, Mauro y Ciro", "Thiago, Marcos y Ciro"]
             }
         ];
 
@@ -305,6 +327,7 @@
         let timerInterval;
         let timeLeft = 10;
         const ticTacSound = document.getElementById('tictac-audio');
+        const pitidoSound = document.getElementById('pitido-audio');
 
         window.onload = function() {
             if (sessionStorage.getItem('accesoPermitido') === 'true') {
@@ -343,7 +366,11 @@
             document.getElementById(screenId).classList.remove('hidden');
         }
 
+        // Se acciona al tocar JUGAR: reproduce el pitido e inicia el partido
         function handleStartClick() {
+            pitidoSound.currentTime = 0;
+            pitidoSound.play().catch(error => console.log("Fallo audio inicial:", error));
+            
             requestFullScreen(document.documentElement);
             startGame();
         }
@@ -364,7 +391,6 @@
             const randomIndex = Math.floor(Math.random() * quizData.length);
             currentQuestion = quizData[randomIndex];
             
-            // Forzamos texto plano textContent para blindar los caracteres ante problemas de codificación del navegador
             document.getElementById('question').textContent = currentQuestion.question;
             
             const optionsContainer = document.getElementById('options-container');
@@ -375,7 +401,7 @@
 
             allOptions.forEach(option => {
                 const button = document.createElement('button');
-                button.textContent = option; // Seguro contra fallas de acentos
+                button.textContent = option;
                 button.className = 'btn option-btn';
                 button.onclick = () => checkAnswer(option);
                 optionsContainer.appendChild(button);
