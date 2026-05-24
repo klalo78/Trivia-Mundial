@@ -33,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* Contenedor del Logo con movimiento - Agrandado un 20% (de 160px a 192px) */
+        /* Contenedor del Logo con movimiento */
         .logo-container {
             margin-bottom: 15px;
             text-align: center;
@@ -42,7 +42,7 @@
         }
 
         .logo-img {
-            max-width: 192px; /* Incrementado un 20% para mayor impacto visual */
+            max-width: 192px; 
             height: auto;
             animation: floatAndTilt 4s ease-in-out infinite;
         }
@@ -148,6 +148,16 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        /* Estilo para botones de control de música (Verde Cancha) */
+        .btn-music {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            color: white;
+        }
+        .btn-music:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
+        }
+
         .btn-restart {
             background: none;
             color: rgba(255, 255, 255, 0.4);
@@ -207,6 +217,14 @@
             flex-shrink: 0;
         }
 
+        /* Icono de nota musical flotante para el modo canción */
+        .music-icon {
+            font-size: 2.8rem;
+            color: #38ef7d;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(56, 239, 125, 0.5);
+        }
+
         .question-text {
             font-size: 1.4rem;
             margin-bottom: 20px;
@@ -239,7 +257,7 @@
 </head>
 <body>
 
-    <!-- LOGO PRINCIPAL (AGRANDADO UN 20%) -->
+    <!-- LOGO PRINCIPAL -->
     <div class="logo-container">
         <img src="logo.png" alt="Logo" class="logo-img">
     </div>
@@ -275,16 +293,22 @@
             <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
         </div>
 
-        <!-- PANTALLA DE JUEGO -->
+        <!-- PANTALLA DE JUEGO (TRIVIA NORMAL) -->
         <div id="screen-game" class="hidden">
             <div class="timer-circle" id="timer">10</div>
-            <div class="question-text" id="question">Cargando...</div>
-            <div id="options-container">
-                <!-- Opciones dinámicas -->
-            </div>
+            <div class="question-text" id="question-trivia">Cargando...</div>
+            <div id="options-container"></div>
         </div>
 
-        <!-- PANTALLA RESULTADO DE PREGUNTA -->
+        <!-- PANTALLA DE JUEGO (MODO CANCIÓN MUNDIAL) -->
+        <div id="screen-music-game" class="hidden">
+            <div class="music-icon">🎵🎸</div>
+            <div class="question-text">¿A qué mundial pertenece esta canción?</div>
+            <button class="btn btn-music" onclick="reproducirAudioMundial()">▶️ REPRODUCIR CANCIÓN</button>
+            <button class="btn btn-primary" onclick="revelarRespuestaMusica()" style="margin-top: 20px;">👁️ VER RESPUESTA</button>
+        </div>
+
+        <!-- PANTALLA RESULTADO DE PREGUNTA / CANCIÓN -->
         <div id="screen-feedback" class="hidden">
             <div class="feedback-text" id="feedback-msg"></div>
             
@@ -294,44 +318,75 @@
         </div>
     </div>
 
-    <!-- REPRODUCTORES DE AUDIO -->
+    <!-- REPRODUCTORES DE AUDIO ESTÁTICOS -->
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
     <audio id="pitido-audio" src="pitido.mp3"></audio>
-    <audio id="mal-audio" src="mal.mp3"></audio> <!-- Nuevo sonido de error -->
+    <audio id="mal-audio" src="mal.mp3"></audio>
+    
+    <!-- REPRODUCTOR DINÁMICO PARA LAS CANCIONES -->
+    <audio id="mundial-song-player"></audio>
 
     <script>
         const CODIGO_ACCESO = '171078';
 
+        // Banco de datos mixto: tipo 'trivia' o tipo 'musica'
         const quizData = [
             {
                 id: 1,
+                type: "trivia",
                 question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
                 correct: "18 años",
                 incorrect: ["17 años", "21 años"]
             },
             {
                 id: 2,
+                type: "trivia",
                 question: "¿Qué selección ganó el Mundial de Qatar 2022?",
                 correct: "Argentina",
                 incorrect: ["Francia", "Croacia"]
             },
             {
                 id: 3,
+                type: "trivia",
                 question: "¿Cuál fue el equipo rival de Argentina en la final del mundial de 1978?",
                 correct: "Países Bajos",
                 incorrect: ["Italia", "Alemania"]
             },
             {
                 id: 4,
+                type: "trivia",
                 question: "¿Cuántas veces Argentina salió subcampeón en la copa mundial?",
                 correct: "3",
                 incorrect: ["2", "4"]
             },
             {
                 id: 5,
+                type: "trivia",
                 question: "¿Cómo se llaman los hijos de Messi?",
                 correct: "Thiago, Mateo y Ciro",
                 incorrect: ["Thiago, Mauro y Ciro", "Thiago, Marcos y Ciro"]
+            },
+            // NUEVAS CARTAS DE CANCIONES INTERCALADAS
+            {
+                id: 6,
+                type: "musica",
+                audioFile: "francia98.mp3",
+                respuestaCorta: "Mundial de Francia 98",
+                detalles: "Canción: La copa de la vida<br>Artista: Ricky Martin"
+            },
+            {
+                id: 7,
+                type: "musica",
+                audioFile: "italia90.mp3",
+                respuestaCorta: "Mundial Italia 90",
+                detalles: "Canción: Un'estate italiana<br>Intérpretes: Edoardo Bennato y Gianna Nannini"
+            },
+            {
+                id: 8,
+                type: "musica",
+                audioFile: "sudafrica2010.mp3",
+                respuestaCorta: "Mundial de Sudáfrica 2010",
+                detalles: "Canción: Waka Waka<br>Artista: Shakira"
             }
         ];
 
@@ -339,9 +394,11 @@
         let currentQuestion;
         let timerInterval;
         let timeLeft = 10;
+        
         const ticTacSound = document.getElementById('tictac-audio');
         const pitidoSound = document.getElementById('pitido-audio');
         const malSound = document.getElementById('mal-audio');
+        const songPlayer = document.getElementById('mundial-song-player');
 
         window.onload = function() {
             if (sessionStorage.getItem('accesoPermitido') === 'true') {
@@ -375,6 +432,7 @@
             document.getElementById('screen-home').classList.add('hidden');
             document.getElementById('screen-rules').classList.add('hidden');
             document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-music-game').classList.add('hidden');
             document.getElementById('screen-feedback').classList.add('hidden');
 
             document.getElementById(screenId).classList.remove('hidden');
@@ -408,11 +466,14 @@
         }
 
         function lanzarPregunta() {
+            // Frenar cualquier música que haya quedado sonando de la ronda anterior
+            songPlayer.pause();
+
             const preguntasDisponibles = quizData.filter(q => !preguntasJugadas.includes(q.id));
 
             if (preguntasDisponibles.length === 0) {
                 const feedbackMsg = document.getElementById('feedback-msg');
-                feedbackMsg.innerHTML = "🏁 ¡Final del partido!<br>Se terminaron las preguntas de la caja.";
+                feedbackMsg.innerHTML = "🏁 ¡Final del partido!<br>Se terminaron las preguntas y canciones de la caja.";
                 feedbackMsg.style.color = "#ffffff"; 
                 document.getElementById('btn-next').classList.add('hidden'); 
                 showScreen('screen-feedback');
@@ -423,48 +484,79 @@
             currentQuestion = preguntasDisponibles[randomIndex];
             
             preguntasJugadas.push(currentQuestion.id);
-
-            document.getElementById('question').textContent = currentQuestion.question;
             document.getElementById('btn-next').classList.remove('hidden'); 
-            
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = ''; 
 
-            const allOptions = [currentQuestion.correct, ...currentQuestion.incorrect];
-            allOptions.sort(() => Math.random() - 0.5);
-
-            allOptions.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = 'btn option-btn';
-                button.onclick = () => checkAnswer(option);
-                optionsContainer.appendChild(button);
-            });
-
-            timeLeft = 10;
-            document.getElementById('timer').innerText = timeLeft;
-            clearInterval(timerInterval);
-            
-            ticTacSound.currentTime = 0;
-            ticTacSound.play().catch(error => console.log("Audio esperando acción:", error));
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
+            // LOGICA DE SEGREGACIÓN SEGÚN EL TIPO DE CARTA
+            if (currentQuestion.type === "trivia") {
+                // Modo trivia clásico
+                document.getElementById('question-trivia').textContent = currentQuestion.question;
                 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    ticTacSound.pause();
-                    // Suena el archivo mal.mp3 cuando se agota el tiempo
-                    malSound.currentTime = 0;
-                    malSound.play().catch(error => console.log("Audio desactivado:", error));
-                    endQuestion(false, "¡Se acabó el tiempo! ⏱️");
-                }
-            }, 1000);
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = ''; 
 
-            showScreen('screen-game');
+                const allOptions = [currentQuestion.correct, ...currentQuestion.incorrect];
+                allOptions.sort(() => Math.random() - 0.5);
+
+                allOptions.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.className = 'btn option-btn';
+                    button.onclick = () => checkAnswer(option);
+                    optionsContainer.appendChild(button);
+                });
+
+                timeLeft = 10;
+                document.getElementById('timer').innerText = timeLeft;
+                clearInterval(timerInterval);
+                
+                ticTacSound.currentTime = 0;
+                ticTacSound.play().catch(error => console.log("Audio esperando acción:", error));
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timer').innerText = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        ticTacSound.pause();
+                        malSound.currentTime = 0;
+                        malSound.play().catch(error => console.log("Audio desactivado:", error));
+                        endQuestion(false, "¡Se acabó el tiempo! ⏱️");
+                    }
+                }, 1000);
+
+                showScreen('screen-game');
+
+            } else if (currentQuestion.type === "musica") {
+                // Modo Adivinar Canción Mundialista
+                clearInterval(timerInterval); // No hay reloj para la música
+                ticTacSound.pause();
+
+                // Seteamos el archivo de audio correcto en el reproductor oculto
+                songPlayer.src = currentQuestion.audioFile;
+                songPlayer.currentTime = 0;
+
+                showScreen('screen-music-game');
+            }
         }
 
+        // Funciones exclusivas para el modo Canción
+        function reproducirAudioMundial() {
+            songPlayer.play().catch(error => console.log("Error al reproducir canción:", error));
+        }
+
+        function revelarRespuestaMusica() {
+            songPlayer.pause(); // Pausar música al mostrar la solución
+            
+            const feedbackMsg = document.getElementById('feedback-msg');
+            // Formato pedido: año y país del mundial + nombre de canción y artista
+            feedbackMsg.innerHTML = `🎵 RESPUESTA:<br><br><span style="color:#ffd700; font-size:1.5rem;">${currentQuestion.respuestaCorta}</span><br>${currentQuestion.detalles}`;
+            feedbackMsg.style.color = "#ffffff"; // Blanco para que resalte
+            
+            showScreen('screen-feedback');
+        }
+
+        // Validación para modo Trivia clásica
         function checkAnswer(selectedOption) {
             clearInterval(timerInterval);
             ticTacSound.pause();
@@ -472,7 +564,6 @@
             if (selectedOption === currentQuestion.correct) {
                 endQuestion(true, "¡Correcto! 🌟");
             } else {
-                // Suena el archivo mal.mp3 si la respuesta es incorrecta
                 malSound.currentTime = 0;
                 malSound.play().catch(error => console.log("Audio desactivado:", error));
                 endQuestion(false, "Incorrecto... ❌ La respuesta era " + currentQuestion.correct);
@@ -481,12 +572,13 @@
 
         function endQuestion(isWin, message) {
             const feedbackMsg = document.getElementById('feedback-msg');
-            feedbackMsg.textContent = message;
+            feedbackMsg.innerHTML = message;
             feedbackMsg.style.color = isWin ? "#4cd137" : "#ffffff";
             showScreen('screen-feedback');
         }
 
         function reiniciarJuegoCompleto() {
+            songPlayer.pause();
             preguntasJugadas = [];
             showScreen('screen-home');
         }
