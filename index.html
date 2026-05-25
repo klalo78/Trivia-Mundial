@@ -312,7 +312,10 @@
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
     <audio id="pitido-audio" src="pitido.mp3"></audio>
     <audio id="mal-audio" src="mal.mp3"></audio>
-    <audio id="festejo-audio" src="festejo.mp3"></audio> <audio id="hinchada-audio" src="hinchada.mp3" loop></audio> <audio id="mundial-song-player"></audio>
+    <audio id="festejo-audio" src="festejo.mp3"></audio>
+    <audio id="hinchada-audio" src="hinchada.mp3" loop></audio>
+    
+    <audio id="mundial-song-player"></audio>
 
     <script>
         const CODIGO_ACCESO = '171078';
@@ -413,7 +416,7 @@
 
         function reproducirHinchada() {
             hinchadaSound.currentTime = 0;
-            hinchadaSound.play().catch(error => console.log("El navegador bloqueó audio ambiente inicial:", error));
+            hinchadaSound.play().catch(error => console.log("Bloqueo inicial ambiente:", error));
         }
 
         document.getElementById('input-pass').addEventListener('keyup', function(event) {
@@ -434,7 +437,7 @@
         }
 
         function handleStartClick() {
-            hinchadaSound.pause(); // Frenar ambiente de fondo al empezar el juego real
+            hinchadaSound.pause();
             
             pitidoSound.currentTime = 0;
             pitidoSound.play().catch(error => console.log("Audio desactivado:", error));
@@ -464,6 +467,8 @@
 
         function lanzarPregunta() {
             songPlayer.pause();
+            // AJUSTE: Cortar festejo.mp3 inmediatamente al cargar la siguiente ronda
+            festejoSound.pause();
 
             const preguntasDisponibles = quizData.filter(q => !preguntasJugadas.includes(q.id));
 
@@ -551,7 +556,6 @@
             ticTacSound.pause();
             
             if (selectedOption === currentQuestion.correct) {
-                // Suena festejo.mp3 al responder de forma correcta
                 festejoSound.currentTime = 0;
                 festejoSound.play().catch(error => console.log("Audio desactivado:", error));
                 endQuestion(true, "¡Correcto! 🌟");
@@ -571,9 +575,10 @@
 
         function reiniciarJuegoCompleto() {
             songPlayer.pause();
+            festejoSound.pause();
             preguntasJugadas = [];
             showScreen('screen-home');
-            reproducirHinchada(); // Reactiva el aliento de fondo al volver a la home
+            reproducirHinchada(); 
         }
     </script>
 </body>
