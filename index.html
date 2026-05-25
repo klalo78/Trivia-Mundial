@@ -148,7 +148,6 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Estilo para botones de control de música (Verde Cancha) */
         .btn-music {
             background: linear-gradient(45deg, #11998e, #38ef7d);
             color: white;
@@ -217,7 +216,6 @@
             flex-shrink: 0;
         }
 
-        /* Icono de nota musical flotante para el modo canción */
         .music-icon {
             font-size: 2.8rem;
             color: #38ef7d;
@@ -257,14 +255,12 @@
 </head>
 <body>
 
-    <!-- LOGO PRINCIPAL -->
     <div class="logo-container">
         <img src="logo.png" alt="Logo" class="logo-img">
     </div>
 
     <div class="container">
         
-        <!-- PANTALLA: BLOQUEO POR CÓDIGO -->
         <div id="screen-gate">
             <h2>Ingresa los números que se encuentran debajo del código QR en la caja</h2>
             <input type="text" id="input-pass" class="input-codigo" placeholder="000000">
@@ -272,13 +268,11 @@
             <button class="btn btn-primary" onclick="validarCodigo()">ENTRAR</button>
         </div>
 
-        <!-- PANTALLA PRINCIPAL -->
         <div id="screen-home" class="hidden">
             <button class="btn btn-primary" onclick="handleStartClick()" style="margin-top: 10px;">JUGAR</button>
             <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
-        <!-- PANTALLA REGLAMENTO -->
         <div id="screen-rules" class="hidden">
             <h1>🏆 ¡Conseguí la cuarta!</h1>
             <div class="reglamento-texto">
@@ -293,14 +287,12 @@
             <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
         </div>
 
-        <!-- PANTALLA DE JUEGO (TRIVIA NORMAL) -->
         <div id="screen-game" class="hidden">
             <div class="timer-circle" id="timer">10</div>
             <div class="question-text" id="question-trivia">Cargando...</div>
             <div id="options-container"></div>
         </div>
 
-        <!-- PANTALLA DE JUEGO (MODO CANCIÓN MUNDIAL) -->
         <div id="screen-music-game" class="hidden">
             <div class="music-icon">🎵🎸</div>
             <div class="question-text">¿A qué mundial pertenece esta canción?</div>
@@ -308,7 +300,6 @@
             <button class="btn btn-primary" onclick="revelarRespuestaMusica()" style="margin-top: 20px;">👁️ VER RESPUESTA</button>
         </div>
 
-        <!-- PANTALLA RESULTADO DE PREGUNTA / CANCIÓN -->
         <div id="screen-feedback" class="hidden">
             <div class="feedback-text" id="feedback-msg"></div>
             
@@ -318,18 +309,14 @@
         </div>
     </div>
 
-    <!-- REPRODUCTORES DE AUDIO ESTÁTICOS -->
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
     <audio id="pitido-audio" src="pitido.mp3"></audio>
     <audio id="mal-audio" src="mal.mp3"></audio>
-    
-    <!-- REPRODUCTOR DINÁMICO PARA LAS CANCIONES -->
-    <audio id="mundial-song-player"></audio>
+    <audio id="festejo-audio" src="festejo.mp3"></audio> <audio id="hinchada-audio" src="hinchada.mp3" loop></audio> <audio id="mundial-song-player"></audio>
 
     <script>
         const CODIGO_ACCESO = '171078';
 
-        // Banco de datos mixto: tipo 'trivia' o tipo 'musica'
         const quizData = [
             {
                 id: 1,
@@ -366,7 +353,6 @@
                 correct: "Thiago, Mateo y Ciro",
                 incorrect: ["Thiago, Mauro y Ciro", "Thiago, Marcos y Ciro"]
             },
-            // NUEVAS CARTAS DE CANCIONES INTERCALADAS
             {
                 id: 6,
                 type: "musica",
@@ -398,11 +384,14 @@
         const ticTacSound = document.getElementById('tictac-audio');
         const pitidoSound = document.getElementById('pitido-audio');
         const malSound = document.getElementById('mal-audio');
+        const festejoSound = document.getElementById('festejo-audio');
+        const hinchadaSound = document.getElementById('hinchada-audio');
         const songPlayer = document.getElementById('mundial-song-player');
 
         window.onload = function() {
             if (sessionStorage.getItem('accesoPermitido') === 'true') {
                 showScreen('screen-home');
+                reproducirHinchada();
             } else {
                 showScreen('screen-gate');
             }
@@ -416,9 +405,15 @@
                 errorDiv.innerText = "";
                 sessionStorage.setItem('accesoPermitido', 'true');
                 showScreen('screen-home');
+                reproducirHinchada();
             } else {
                 errorDiv.innerText = "Código incorrecto. ¡Seguí participando!";
             }
+        }
+
+        function reproducirHinchada() {
+            hinchadaSound.currentTime = 0;
+            hinchadaSound.play().catch(error => console.log("El navegador bloqueó audio ambiente inicial:", error));
         }
 
         document.getElementById('input-pass').addEventListener('keyup', function(event) {
@@ -439,6 +434,8 @@
         }
 
         function handleStartClick() {
+            hinchadaSound.pause(); // Frenar ambiente de fondo al empezar el juego real
+            
             pitidoSound.currentTime = 0;
             pitidoSound.play().catch(error => console.log("Audio desactivado:", error));
             
@@ -466,7 +463,6 @@
         }
 
         function lanzarPregunta() {
-            // Frenar cualquier música que haya quedado sonando de la ronda anterior
             songPlayer.pause();
 
             const preguntasDisponibles = quizData.filter(q => !preguntasJugadas.includes(q.id));
@@ -486,9 +482,7 @@
             preguntasJugadas.push(currentQuestion.id);
             document.getElementById('btn-next').classList.remove('hidden'); 
 
-            // LOGICA DE SEGREGACIÓN SEGÚN EL TIPO DE CARTA
             if (currentQuestion.type === "trivia") {
-                // Modo trivia clásico
                 document.getElementById('question-trivia').textContent = currentQuestion.question;
                 
                 const optionsContainer = document.getElementById('options-container');
@@ -528,11 +522,9 @@
                 showScreen('screen-game');
 
             } else if (currentQuestion.type === "musica") {
-                // Modo Adivinar Canción Mundialista
-                clearInterval(timerInterval); // No hay reloj para la música
+                clearInterval(timerInterval); 
                 ticTacSound.pause();
 
-                // Seteamos el archivo de audio correcto en el reproductor oculto
                 songPlayer.src = currentQuestion.audioFile;
                 songPlayer.currentTime = 0;
 
@@ -540,28 +532,28 @@
             }
         }
 
-        // Funciones exclusivas para el modo Canción
         function reproducirAudioMundial() {
             songPlayer.play().catch(error => console.log("Error al reproducir canción:", error));
         }
 
         function revelarRespuestaMusica() {
-            songPlayer.pause(); // Pausar música al mostrar la solución
+            songPlayer.pause(); 
             
             const feedbackMsg = document.getElementById('feedback-msg');
-            // Formato pedido: año y país del mundial + nombre de canción y artista
             feedbackMsg.innerHTML = `🎵 RESPUESTA:<br><br><span style="color:#ffd700; font-size:1.5rem;">${currentQuestion.respuestaCorta}</span><br>${currentQuestion.detalles}`;
-            feedbackMsg.style.color = "#ffffff"; // Blanco para que resalte
+            feedbackMsg.style.color = "#ffffff"; 
             
             showScreen('screen-feedback');
         }
 
-        // Validación para modo Trivia clásica
         function checkAnswer(selectedOption) {
             clearInterval(timerInterval);
             ticTacSound.pause();
             
             if (selectedOption === currentQuestion.correct) {
+                // Suena festejo.mp3 al responder de forma correcta
+                festejoSound.currentTime = 0;
+                festejoSound.play().catch(error => console.log("Audio desactivado:", error));
                 endQuestion(true, "¡Correcto! 🌟");
             } else {
                 malSound.currentTime = 0;
@@ -581,6 +573,7 @@
             songPlayer.pause();
             preguntasJugadas = [];
             showScreen('screen-home');
+            reproducirHinchada(); // Reactiva el aliento de fondo al volver a la home
         }
     </script>
 </body>
