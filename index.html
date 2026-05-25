@@ -5,19 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trivia Mundialista</title>
     <style>
-        /* Carga de la tipografía personalizada */
-        @font-face {
-            font-family: 'Super Sunkissed';
-            src: url('Super Sunkissed.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Super Sunkissed', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Nueva combinación de fuentes: más gruesas, limpias y ultra legibles */
+            font-family: 'Arial Black', 'Impact', 'Montserrat', 'Segoe UI', sans-serif;
+            letter-spacing: 0.5px;
         }
 
         body {
@@ -54,31 +48,31 @@
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.82); /* Un toque más oscuro para aumentar el contraste de las letras */
             backdrop-filter: blur(8px);
             border-radius: 15px;
-            padding: 25px;
+            padding: 30px; /* Más aire interno */
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             z-index: 5;
-            max-height: 75vh;
+            max-height: 80vh;
             display: flex;
             flex-direction: column;
         }
 
         h2 {
-            font-size: 1.3rem;
-            line-height: 1.5;
-            margin-bottom: 15px;
+            font-size: 1.4rem; /* Más grande */
+            line-height: 1.6;
+            margin-bottom: 20px;
             color: #4facfe;
             font-weight: normal;
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 2.2rem; /* Más grande */
             margin-bottom: 15px;
             color: #4facfe;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -88,54 +82,56 @@
 
         .input-codigo {
             width: 100%;
-            padding: 12px;
-            font-size: 1.6rem;
+            padding: 14px;
+            font-size: 1.8rem; /* Mayor visibilidad al tipear */
             text-align: center;
             border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.6);
             color: #fff;
-            margin-bottom: 10px;
-            letter-spacing: 4px;
+            margin-bottom: 15px;
+            letter-spacing: 6px;
             font-family: inherit;
         }
 
         .input-codigo:focus {
             outline: none;
             border-color: #00c6ff;
-            box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+            box-shadow: 0 0 12px rgba(0, 198, 255, 0.6);
         }
 
         .error-msg {
             color: #ff4757;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-bottom: 10px;
-            min-height: 20px;
+            min-height: 25px;
         }
 
         .btn {
             display: block;
             width: 100%;
-            padding: 14px;
-            margin: 8px 0;
+            padding: 16px; /* Botones más robustos y fáciles de tocar */
+            margin: 10px 0;
             border: none;
             border-radius: 8px;
-            font-size: 1.3rem;
+            font-size: 1.4rem; /* Letra de botones más grande */
             cursor: pointer;
             transition: all 0.2s ease;
             flex-shrink: 0;
             font-family: inherit;
+            text-transform: uppercase; /* Fuerza botones imponentes */
         }
 
         .btn-primary {
             background: linear-gradient(45deg, #00c6ff, #0072ff);
             color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.5);
         }
 
         .btn-secondary {
@@ -151,19 +147,21 @@
         .btn-music {
             background: linear-gradient(45deg, #11998e, #38ef7d);
             color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .btn-music:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.5);
         }
 
         .btn-restart {
             background: none;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.5);
             border: 1px dashed rgba(255, 255, 255, 0.2);
-            font-size: 1rem;
+            font-size: 1.1rem;
             padding: 10px;
-            margin-top: 15px;
+            margin-top: 20px;
+            text-transform: none;
         }
 
         .btn-restart:hover {
@@ -181,11 +179,12 @@
             line-height: 1.6;
             margin-bottom: 15px;
             background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
+            padding: 18px;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.2rem; /* Reglamento mucho más legible */
             overflow-y: auto;
-            max-height: 35vh;
+            max-height: 38vh;
+            font-family: 'Segoe UI', sans-serif; /* Mantiene el reglamento en fuente limpia de lectura */
         }
 
         .reglamento-texto::-webkit-scrollbar {
@@ -198,36 +197,39 @@
 
         .destacado {
             color: #ffd700;
+            font-weight: bold;
         }
 
         .timer-circle {
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            border: 4px solid #ff4757;
-            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+            border: 5px solid #ff4757;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             color: #ff4757;
             margin: 0 auto 20px auto;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.5);
             flex-shrink: 0;
         }
 
         .music-icon {
-            font-size: 2.8rem;
+            font-size: 3rem;
             color: #38ef7d;
             margin-bottom: 15px;
             text-shadow: 0 0 10px rgba(56, 239, 125, 0.5);
         }
 
+        /* Preguntas más destacadas y claras */
         .question-text {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            font-size: 1.6rem; 
+            margin-bottom: 25px;
+            line-height: 1.4;
             overflow-y: auto;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
 
         #options-container {
@@ -235,10 +237,12 @@
         }
 
         .option-btn {
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
             text-align: left;
             padding-left: 20px;
+            font-size: 1.3rem;
+            text-transform: none; /* Mantiene las respuestas naturales */
         }
 
         .option-btn:hover {
@@ -247,9 +251,9 @@
         }
 
         .feedback-text {
-            font-size: 1.6rem;
-            margin-bottom: 20px;
-            line-height: 1.4;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -467,7 +471,6 @@
 
         function lanzarPregunta() {
             songPlayer.pause();
-            // AJUSTE: Cortar festejo.mp3 inmediatamente al cargar la siguiente ronda
             festejoSound.pause();
 
             const preguntasDisponibles = quizData.filter(q => !preguntasJugadas.includes(q.id));
@@ -545,7 +548,7 @@
             songPlayer.pause(); 
             
             const feedbackMsg = document.getElementById('feedback-msg');
-            feedbackMsg.innerHTML = `🎵 RESPUESTA:<br><br><span style="color:#ffd700; font-size:1.5rem;">${currentQuestion.respuestaCorta}</span><br>${currentQuestion.detalles}`;
+            feedbackMsg.innerHTML = `🎵 RESPUESTA:<br><br><span style="color:#ffd700; font-size:1.6rem;">${currentQuestion.respuestaCorta}</span><br>${currentQuestion.detalles}`;
             feedbackMsg.style.color = "#ffffff"; 
             
             showScreen('screen-feedback');
