@@ -9,7 +9,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            /* Nueva combinación de fuentes: más gruesas, limpias y ultra legibles */
             font-family: 'Arial Black', 'Impact', 'Montserrat', 'Segoe UI', sans-serif;
             letter-spacing: 0.5px;
         }
@@ -48,10 +47,10 @@
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.82); /* Un toque más oscuro para aumentar el contraste de las letras */
+            background: rgba(0, 0, 0, 0.82); 
             backdrop-filter: blur(8px);
             border-radius: 15px;
-            padding: 30px; /* Más aire interno */
+            padding: 30px; 
             width: 100%;
             max-width: 500px;
             text-align: center;
@@ -64,7 +63,7 @@
         }
 
         h2 {
-            font-size: 1.4rem; /* Más grande */
+            font-size: 1.4rem; 
             line-height: 1.6;
             margin-bottom: 20px;
             color: #4facfe;
@@ -72,7 +71,7 @@
         }
 
         h1 {
-            font-size: 2.2rem; /* Más grande */
+            font-size: 2.2rem; 
             margin-bottom: 15px;
             color: #4facfe;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -83,7 +82,7 @@
         .input-codigo {
             width: 100%;
             padding: 14px;
-            font-size: 1.8rem; /* Mayor visibilidad al tipear */
+            font-size: 1.8rem; 
             text-align: center;
             border-radius: 8px;
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -111,16 +110,16 @@
         .btn {
             display: block;
             width: 100%;
-            padding: 16px; /* Botones más robustos y fáciles de tocar */
+            padding: 16px; 
             margin: 10px 0;
             border: none;
             border-radius: 8px;
-            font-size: 1.4rem; /* Letra de botones más grande */
+            font-size: 1.4rem; 
             cursor: pointer;
             transition: all 0.2s ease;
             flex-shrink: 0;
             font-family: inherit;
-            text-transform: uppercase; /* Fuerza botones imponentes */
+            text-transform: uppercase; 
         }
 
         .btn-primary {
@@ -181,10 +180,10 @@
             background: rgba(0, 0, 0, 0.4);
             padding: 18px;
             border-radius: 8px;
-            font-size: 1.2rem; /* Reglamento mucho más legible */
+            font-size: 1.2rem; 
             overflow-y: auto;
             max-height: 38vh;
-            font-family: 'Segoe UI', sans-serif; /* Mantiene el reglamento en fuente limpia de lectura */
+            font-family: 'Segoe UI', sans-serif; 
         }
 
         .reglamento-texto::-webkit-scrollbar {
@@ -223,7 +222,6 @@
             text-shadow: 0 0 10px rgba(56, 239, 125, 0.5);
         }
 
-        /* Preguntas más destacadas y claras */
         .question-text {
             font-size: 1.6rem; 
             margin-bottom: 25px;
@@ -242,7 +240,7 @@
             text-align: left;
             padding-left: 20px;
             font-size: 1.3rem;
-            text-transform: none; /* Mantiene las respuestas naturales */
+            text-transform: none; 
         }
 
         .option-btn:hover {
@@ -259,12 +257,14 @@
 </head>
 <body>
 
+    <!-- LOGO PRINCIPAL -->
     <div class="logo-container">
         <img src="logo.png" alt="Logo" class="logo-img">
     </div>
 
     <div class="container">
         
+        <!-- PANTALLA: BLOQUEO POR CÓDIGO -->
         <div id="screen-gate">
             <h2>Ingresa los números que se encuentran debajo del código QR en la caja</h2>
             <input type="text" id="input-pass" class="input-codigo" placeholder="000000">
@@ -272,11 +272,13 @@
             <button class="btn btn-primary" onclick="validarCodigo()">ENTRAR</button>
         </div>
 
+        <!-- PANTALLA PRINCIPAL -->
         <div id="screen-home" class="hidden">
             <button class="btn btn-primary" onclick="handleStartClick()" style="margin-top: 10px;">JUGAR</button>
             <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
+        <!-- PANTALLA REGLAMENTO -->
         <div id="screen-rules" class="hidden">
             <h1>🏆 ¡Conseguí la cuarta!</h1>
             <div class="reglamento-texto">
@@ -291,12 +293,14 @@
             <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
         </div>
 
+        <!-- PANTALLA DE JUEGO (TRIVIA NORMAL) -->
         <div id="screen-game" class="hidden">
             <div class="timer-circle" id="timer">10</div>
             <div class="question-text" id="question-trivia">Cargando...</div>
             <div id="options-container"></div>
         </div>
 
+        <!-- PANTALLA DE JUEGO (MODO CANCIÓN MUNDIAL) -->
         <div id="screen-music-game" class="hidden">
             <div class="music-icon">🎵🎸</div>
             <div class="question-text">¿A qué mundial pertenece esta canción?</div>
@@ -304,6 +308,7 @@
             <button class="btn btn-primary" onclick="revelarRespuestaMusica()" style="margin-top: 20px;">👁️ VER RESPUESTA</button>
         </div>
 
+        <!-- PANTALLA RESULTADO DE PREGUNTA / CANCIÓN -->
         <div id="screen-feedback" class="hidden">
             <div class="feedback-text" id="feedback-msg"></div>
             
@@ -313,12 +318,14 @@
         </div>
     </div>
 
+    <!-- REPRODUCTORES DE AUDIO ESTÁTICOS -->
     <audio id="tictac-audio" src="tictac.mp3" loop></audio>
     <audio id="pitido-audio" src="pitido.mp3"></audio>
     <audio id="mal-audio" src="mal.mp3"></audio>
     <audio id="festejo-audio" src="festejo.mp3"></audio>
     <audio id="hinchada-audio" src="hinchada.mp3" loop></audio>
     
+    <!-- REPRODUCTOR DINÁMICO PARA LAS CANCIONES -->
     <audio id="mundial-song-player"></audio>
 
     <script>
@@ -380,6 +387,119 @@
                 audioFile: "sudafrica2010.mp3",
                 respuestaCorta: "Mundial de Sudáfrica 2010",
                 detalles: "Canción: Waka Waka<br>Artista: Shakira"
+            },
+            // NUEVO BLOQUE DE PREGUNTAS EN BASE A TU LISTADO
+            {
+                id: 9,
+                type: "trivia",
+                question: "¿En qué club juega actualmente Emiliano 'Dibu' Martínez?",
+                correct: "Aston Villa",
+                incorrect: ["Arsenal F. C.", "Manchester United"]
+            },
+            {
+                id: 10,
+                type: "trivia",
+                question: "¿En qué equipo de la Premier League se destaca Cristian 'Cuti' Romero?",
+                correct: "Tottenham Hotspur",
+                incorrect: ["Chelsea F. C.", "Manchester City"]
+            },
+            {
+                id: 11,
+                type: "trivia",
+                question: "¿Cuál es el club actual del defensor Nicolás Otamendi?",
+                correct: "Benfica de Portugal",
+                incorrect: ["Valencia C. F.", "Porto"]
+            },
+            {
+                id: 12,
+                type: "trivia",
+                question: "¿En qué equipo español milita actualmente el lateral Nahuel Molina?",
+                correct: "Atlético de Madrid",
+                incorrect: ["Real Betis", "Villarreal C. F."]
+            },
+            {
+                id: 13,
+                type: "trivia",
+                question: "¿A qué club de la liga francesa pertenece el defensor Nicolás Tagliafico?",
+                correct: "Olympique de Lyon",
+                incorrect: ["París Saint-Germain", "Olympique de Marsella"]
+            },
+            {
+                id: 14,
+                type: "trivia",
+                question: "¿En qué equipo de Inglaterra juega el mediocampista Enzo Fernández?",
+                correct: "Chelsea F. C.",
+                incorrect: ["Manchester City", "Liverpool F. C."]
+            },
+            {
+                id: 15,
+                type: "trivia",
+                question: "¿Cuál es el equipo actual de Rodrigo de Paul en los Estados Unidos?",
+                correct: "Inter Miami CF",
+                incorrect: ["Los Angeles Galaxy", "New York City FC"]
+            },
+            {
+                id: 16,
+                type: "trivia",
+                question: "¿En qué club inglés brilla actualmente Alexis Mac Allister?",
+                correct: "Liverpool F. C.",
+                incorrect: ["Brighton & Hove Albion", "Arsenal F. C."]
+            },
+            {
+                id: 17,
+                type: "trivia",
+                question: "¿En qué club juega el volante Leandro Paredes tras su regreso al fútbol argentino?",
+                correct: "Club Atlético Boca Juniors",
+                incorrect: ["Club Atlético River Plate", "Club Atlético San Lorenzo"]
+            },
+            {
+                id: 18,
+                type: "trivia",
+                question: "¿A qué equipo de la Liga de España pertenece actualmente Thiago Almada?",
+                correct: "Atlético de Madrid",
+                incorrect: ["Sevilla F. C.", "Real Sociedad"]
+            },
+            {
+                id: 19,
+                type: "trivia",
+                question: "¿En qué equipo de la Serie A italiana se destaca el joven Nicolás Paz?",
+                correct: "Como 1907",
+                incorrect: ["Real Madrid Castilla", "Fiorentina"]
+            },
+            {
+                id: 20,
+                type: "trivia",
+                question: "¿En qué club español milita actualmente el delantero Giuliano Simeone?",
+                correct: "Atlético de Madrid",
+                incorrect: ["Deportivo Alavés", "Getafe C. F."]
+            },
+            {
+                id: 21,
+                type: "trivia",
+                question: "¿Cuál es el club actual del delantero de la selección Nicolás González?",
+                correct: "Atlético de Madrid",
+                incorrect: ["Fiorentina", "Juventus"]
+            },
+            {
+                id: 22,
+                type: "trivia",
+                question: "¿En qué club de la MLS juega el astro Lionel Messi?",
+                correct: "Inter Miami CF",
+                incorrect: ["París Saint-Germain", "Barcelona F. C."]
+            },
+            {
+                id: 23,
+                type: "trivia",
+                question: "¿A qué club fue transferido el delantero Julián 'La Araña' Álvarez?",
+                correct: "Atlético de Madrid",
+                incorrect: ["Manchester City", "Real Madrid"]
+            },
+            {
+                id: 24,
+                type: "trivia",
+                question: "¿En qué histórico equipo italiano juega y es capitán Lautaro Martínez?",
+                correct: "Inter de Milán",
+                incorrect: ["A. C. Milan", "Juventus"]
             }
         ];
 
