@@ -62,12 +62,13 @@
             flex-direction: column;
         }
 
-        h2 {
+        /* Indicación del código QR en blanco y bold */
+        .gate-title {
             font-size: 1.4rem; 
             line-height: 1.6;
             margin-bottom: 20px;
-            color: #4facfe;
-            font-weight: normal;
+            color: #ffffff; /* Fuerza blanco puro */
+            font-weight: bold; /* Estilo bold */
         }
 
         h1 {
@@ -122,9 +123,11 @@
             text-transform: uppercase; 
         }
 
+        /* Botones principales en BOLD */
         .btn-primary {
             background: linear-gradient(45deg, #00c6ff, #0072ff);
             color: white;
+            font-weight: bold;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
@@ -136,11 +139,29 @@
         .btn-secondary {
             background: rgba(255, 255, 255, 0.15);
             color: white;
+            font-weight: bold;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Animación para que titile el botón Reglamento */
+        .btn-blink {
+            animation: blinkGlow 2s infinite alternate;
+        }
+
+        @keyframes blinkGlow {
+            0% {
+                opacity: 0.6;
+                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+            }
+            100% {
+                opacity: 1;
+                background: rgba(255, 255, 255, 0.3);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            }
         }
 
         .btn-music {
@@ -176,7 +197,7 @@
         .reglamento-texto {
             text-align: left;
             line-height: 1.6;
-            margin-bottom: 15px;
+            margin-top: 5px;
             background: rgba(0, 0, 0, 0.4);
             padding: 18px;
             border-radius: 8px;
@@ -264,23 +285,25 @@
 
     <div class="container">
         
-        <!-- PANTALLA: BLOQUEO POR CÓDIGO -->
+        <!-- PANTALLA: BLOQUEO POR CÓDIGO (TITULO EN BLANCO Y BOLD) -->
         <div id="screen-gate">
-            <h2>Ingresa los números que se encuentran debajo del código QR en la caja</h2>
+            <h2 class="gate-title">Ingresa los números que se encuentran debajo del código QR en la caja</h2>
             <input type="text" id="input-pass" class="input-codigo" placeholder="000000">
             <div id="error-message" class="error-msg"></div>
             <button class="btn btn-primary" onclick="validarCodigo()">ENTRAR</button>
         </div>
 
-        <!-- PANTALLA PRINCIPAL -->
+        <!-- PANTALLA PRINCIPAL (BOTONES EN BOLD / REGLAMENTO TITILA) -->
         <div id="screen-home" class="hidden">
             <button class="btn btn-primary" onclick="handleStartClick()" style="margin-top: 10px;">JUGAR</button>
-            <button class="btn btn-secondary" onclick="showScreen('screen-rules')">Ver Reglamento</button>
+            <button class="btn btn-secondary btn-blink" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
-        <!-- PANTALLA REGLAMENTO -->
+        <!-- PANTALLA REGLAMENTO (BOTÓN REUBICADO DEBAJO DEL TÍTULO) -->
         <div id="screen-rules" class="hidden">
             <h1>🏆 ¡Conseguí la cuarta!</h1>
+            <button class="btn btn-secondary" onclick="showScreen('screen-home')" style="margin-bottom: 15px;">Volver al Menú</button>
+            
             <div class="reglamento-texto">
                 <p>• Necesitás un <span class="destacado">lápiz</span>, una <span class="destacado">hoja</span> y formar equipos de uno o más integrantes.</p>
                 <p>• Cada respuesta correcta es un punto.</p>
@@ -290,7 +313,6 @@
                     Y el que menos puntos o copas ganó... ¿Paga al ganador? ¿Lava los platos? Lo dejamos a tu criterio...
                 </p>
             </div>
-            <button class="btn btn-secondary" onclick="showScreen('screen-home')">Volver al Inicio</button>
         </div>
 
         <!-- PANTALLA DE JUEGO (TRIVIA NORMAL) -->
@@ -329,8 +351,6 @@
     <audio id="mundial-song-player"></audio>
 
     <script>
-        const CODIGO_ACCESO = '171078';
-
         const quizData = [
             {
                 id: 1,
@@ -388,7 +408,6 @@
                 respuestaCorta: "Mundial de Sudáfrica 2010",
                 detalles: "Canción: Waka Waka<br>Artista: Shakira"
             },
-            // NUEVO BLOQUE DE PREGUNTAS EN BASE A TU LISTADO
             {
                 id: 9,
                 type: "trivia",
@@ -500,6 +519,146 @@
                 question: "¿En qué histórico equipo italiano juega y es capitán Lautaro Martínez?",
                 correct: "Inter de Milán",
                 incorrect: ["A. C. Milan", "Juventus"]
+            },
+            {
+                id: 25,
+                type: "trivia",
+                question: "¿Con qué conocida cantante está de novio el jugador De Paul?",
+                correct: "Tini",
+                incorrect: ["Emilia", "Lali"]
+            },
+            {
+                id: 26,
+                type: "trivia",
+                question: "¿Qué número lleva en la camiseta el jugador De Paul en los mundiales?",
+                correct: "7",
+                incorrect: ["9", "6"]
+            },
+            {
+                id: 27,
+                type: "trivia",
+                question: "¿En qué provincia nació el jugador Ángel Di María?",
+                correct: "Santa Fe",
+                incorrect: ["Buenos Aires", "Córdoba"]
+            },
+            {
+                id: 28,
+                type: "trivia",
+                question: "¿En qué país se jugó el mundial 2014?",
+                correct: "Brasil",
+                incorrect: ["Rusia", "Sudáfrica"]
+            },
+            {
+                id: 29,
+                type: "trivia",
+                question: "¿Qué selección tiene mas mundiales ganados?",
+                correct: "Brasil",
+                incorrect: ["Alemania", "Italia"]
+            },
+            {
+                id: 30,
+                type: "trivia",
+                question: "¿La esposa de qué jugador participó en el reality Master Chef?",
+                correct: "Enzo Fernández",
+                incorrect: ["Lautaro Martínez", "Leandro Paredes"]
+            },
+            {
+                id: 31,
+                type: "trivia",
+                question: "¿En qué país se jugó el mundial 1930?",
+                correct: "Uruguay",
+                incorrect: ["Italia", "Suecia"]
+            },
+            {
+                id: 32,
+                type: "trivia",
+                question: "¿Qué selección eliminó a Brasil 7-1 en el mundial 2014?",
+                correct: "Alemania",
+                incorrect: ["Francia", "Países Bajos"]
+            },
+            {
+                id: 33,
+                type: "trivia",
+                question: "¿De qué barrio del partido de Avellaneda es oriundo el jugador De Paul?",
+                correct: "Sarandí",
+                incorrect: ["Wilde", "Villa Domínico"]
+            },
+            {
+                id: 34,
+                type: "trivia",
+                question: "¿Cuál fue el primer país africano en llegar a una semifinal en un mundial?",
+                correct: "Marruecos",
+                incorrect: ["Sudáfrica", "Senegal"]
+            },
+            {
+                id: 35,
+                type: "trivia",
+                question: "¿Cuál es el nombre de pila del jugador 'Huevo' Acuña?",
+                correct: "Marcos",
+                incorrect: ["Mauro", "Matías"]
+            },
+            {
+                id: 36,
+                type: "trivia",
+                question: "¿Cuántos mundiales ganó la selección italiana?",
+                correct: "4",
+                incorrect: ["3", "5"]
+            },
+            {
+                id: 37,
+                type: "trivia",
+                question: "¿En qué provincia nació el jugador Lionel Messi?",
+                correct: "Santa Fe",
+                incorrect: ["Buenos Aires", "Córdoba"]
+            },
+            {
+                id: 38,
+                type: "trivia",
+                question: "¿Cuál es el nombre de pila del jugador 'Cuti' Romero?",
+                correct: "Cristian",
+                incorrect: ["Andrés", "Carlos"]
+            },
+            {
+                id: 39,
+                type: "trivia",
+                question: "¿Qué jugador ganó el balón de oro en el mundial de Sudáfrica en 2010?",
+                correct: "Diego Forlán",
+                incorrect: ["Diego Godín", "Luis Suárez"]
+            },
+            {
+                id: 40,
+                type: "trivia",
+                question: "¿Qué selección perdió la final contra Argentina en el mundial de México en 1986?",
+                correct: "Alemania",
+                incorrect: ["Francia", "Bélgica"]
+            },
+            {
+                id: 41,
+                type: "trivia",
+                question: "¿Qué jugador uruguayo mordió a un rival en el mundial de Brasil en 2014?",
+                correct: "Luis Suárez",
+                incorrect: ["Edinson Cavani", "Diego Godín"]
+            },
+            {
+                id: 42,
+                type: "trivia",
+                question: "¿En qué mundial apareció por primera vez el VAR?",
+                correct: "2018",
+                incorrect: ["2014", "2022"]
+            },
+            {
+                id: 43,
+                type: "trivia",
+                question: "¿Cuántos mundiales ganó la selección alemana?",
+                correct: "4",
+                incorrect: ["3", "5"]
+            },
+            {
+                id: 44,
+                type: "trivia",
+                question: "¿En qué país se llevó a cabo el primer mundial?",
+                correct: "Uruguay",
+                incorrect: ["Italia", "Francia"]
             }
         ];
 
