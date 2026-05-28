@@ -67,8 +67,8 @@
             font-size: 1.4rem; 
             line-height: 1.6;
             margin-bottom: 20px;
-            color: #ffffff; /* Fuerza blanco puro */
-            font-weight: bold; /* Estilo bold */
+            color: #ffffff; 
+            font-weight: bold; 
         }
 
         h1 {
@@ -123,7 +123,6 @@
             text-transform: uppercase; 
         }
 
-        /* Botones principales en BOLD */
         .btn-primary {
             background: linear-gradient(45deg, #00c6ff, #0072ff);
             color: white;
@@ -285,7 +284,7 @@
 
     <div class="container">
         
-        <!-- PANTALLA: BLOQUEO POR CÓDIGO (TITULO EN BLANCO Y BOLD) -->
+        <!-- PANTALLA: BLOQUEO POR CÓDIGO -->
         <div id="screen-gate">
             <h2 class="gate-title">Ingresa los números que se encuentran debajo del código QR en la caja</h2>
             <input type="text" id="input-pass" class="input-codigo" placeholder="000000">
@@ -293,13 +292,13 @@
             <button class="btn btn-primary" onclick="validarCodigo()">ENTRAR</button>
         </div>
 
-        <!-- PANTALLA PRINCIPAL (BOTONES EN BOLD / REGLAMENTO TITILA) -->
+        <!-- PANTALLA PRINCIPAL -->
         <div id="screen-home" class="hidden">
             <button class="btn btn-primary" onclick="handleStartClick()" style="margin-top: 10px;">JUGAR</button>
             <button class="btn btn-secondary btn-blink" onclick="showScreen('screen-rules')">Ver Reglamento</button>
         </div>
 
-        <!-- PANTALLA REGLAMENTO (BOTÓN REUBICADO DEBAJO DEL TÍTULO) -->
+        <!-- PANTALLA REGLAMENTO -->
         <div id="screen-rules" class="hidden">
             <h1>🏆 ¡Conseguí la cuarta!</h1>
             <button class="btn btn-secondary" onclick="showScreen('screen-home')" style="margin-bottom: 15px;">Volver al Menú</button>
@@ -351,315 +350,53 @@
     <audio id="mundial-song-player"></audio>
 
     <script>
+        const CODIGO_ACCESO = '171078';
+
         const quizData = [
-            {
-                id: 1,
-                type: "trivia",
-                question: "¿A qué edad debutó Messi en la selección mayor Argentina?",
-                correct: "18 años",
-                incorrect: ["17 años", "21 años"]
-            },
-            {
-                id: 2,
-                type: "trivia",
-                question: "¿Qué selección ganó el Mundial de Qatar 2022?",
-                correct: "Argentina",
-                incorrect: ["Francia", "Croacia"]
-            },
-            {
-                id: 3,
-                type: "trivia",
-                question: "¿Cuál fue el equipo rival de Argentina en la final del mundial de 1978?",
-                correct: "Países Bajos",
-                incorrect: ["Italia", "Alemania"]
-            },
-            {
-                id: 4,
-                type: "trivia",
-                question: "¿Cuántas veces Argentina salió subcampeón en la copa mundial?",
-                correct: "3",
-                incorrect: ["2", "4"]
-            },
-            {
-                id: 5,
-                type: "trivia",
-                question: "¿Cómo se llaman los hijos de Messi?",
-                correct: "Thiago, Mateo y Ciro",
-                incorrect: ["Thiago, Mauro y Ciro", "Thiago, Marcos y Ciro"]
-            },
-            {
-                id: 6,
-                type: "musica",
-                audioFile: "francia98.mp3",
-                respuestaCorta: "Mundial de Francia 98",
-                detalles: "Canción: La copa de la vida<br>Artista: Ricky Martin"
-            },
-            {
-                id: 7,
-                type: "musica",
-                audioFile: "italia90.mp3",
-                respuestaCorta: "Mundial Italia 90",
-                detalles: "Canción: Un'estate italiana<br>Intérpretes: Edoardo Bennato y Gianna Nannini"
-            },
-            {
-                id: 8,
-                type: "musica",
-                audioFile: "sudafrica2010.mp3",
-                respuestaCorta: "Mundial de Sudáfrica 2010",
-                detalles: "Canción: Waka Waka<br>Artista: Shakira"
-            },
-            {
-                id: 9,
-                type: "trivia",
-                question: "¿En qué club juega actualmente Emiliano 'Dibu' Martínez?",
-                correct: "Aston Villa",
-                incorrect: ["Arsenal F. C.", "Manchester United"]
-            },
-            {
-                id: 10,
-                type: "trivia",
-                question: "¿En qué equipo de la Premier League se destaca Cristian 'Cuti' Romero?",
-                correct: "Tottenham Hotspur",
-                incorrect: ["Chelsea F. C.", "Manchester City"]
-            },
-            {
-                id: 11,
-                type: "trivia",
-                question: "¿Cuál es el club actual del defensor Nicolás Otamendi?",
-                correct: "Benfica de Portugal",
-                incorrect: ["Valencia C. F.", "Porto"]
-            },
-            {
-                id: 12,
-                type: "trivia",
-                question: "¿En qué equipo español milita actualmente el lateral Nahuel Molina?",
-                correct: "Atlético de Madrid",
-                incorrect: ["Real Betis", "Villarreal C. F."]
-            },
-            {
-                id: 13,
-                type: "trivia",
-                question: "¿A qué club de la liga francesa pertenece el defensor Nicolás Tagliafico?",
-                correct: "Olympique de Lyon",
-                incorrect: ["París Saint-Germain", "Olympique de Marsella"]
-            },
-            {
-                id: 14,
-                type: "trivia",
-                question: "¿En qué equipo de Inglaterra juega el mediocampista Enzo Fernández?",
-                correct: "Chelsea F. C.",
-                incorrect: ["Manchester City", "Liverpool F. C."]
-            },
-            {
-                id: 15,
-                type: "trivia",
-                question: "¿Cuál es el equipo actual de Rodrigo de Paul en los Estados Unidos?",
-                correct: "Inter Miami CF",
-                incorrect: ["Los Angeles Galaxy", "New York City FC"]
-            },
-            {
-                id: 16,
-                type: "trivia",
-                question: "¿En qué club inglés brilla actualmente Alexis Mac Allister?",
-                correct: "Liverpool F. C.",
-                incorrect: ["Brighton & Hove Albion", "Arsenal F. C."]
-            },
-            {
-                id: 17,
-                type: "trivia",
-                question: "¿En qué club juega el volante Leandro Paredes tras su regreso al fútbol argentino?",
-                correct: "Club Atlético Boca Juniors",
-                incorrect: ["Club Atlético River Plate", "Club Atlético San Lorenzo"]
-            },
-            {
-                id: 18,
-                type: "trivia",
-                question: "¿A qué equipo de la Liga de España pertenece actualmente Thiago Almada?",
-                correct: "Atlético de Madrid",
-                incorrect: ["Sevilla F. C.", "Real Sociedad"]
-            },
-            {
-                id: 19,
-                type: "trivia",
-                question: "¿En qué equipo de la Serie A italiana se destaca el joven Nicolás Paz?",
-                correct: "Como 1907",
-                incorrect: ["Real Madrid Castilla", "Fiorentina"]
-            },
-            {
-                id: 20,
-                type: "trivia",
-                question: "¿En qué club español milita actualmente el delantero Giuliano Simeone?",
-                correct: "Atlético de Madrid",
-                incorrect: ["Deportivo Alavés", "Getafe C. F."]
-            },
-            {
-                id: 21,
-                type: "trivia",
-                question: "¿Cuál es el club actual del delantero de la selección Nicolás González?",
-                correct: "Atlético de Madrid",
-                incorrect: ["Fiorentina", "Juventus"]
-            },
-            {
-                id: 22,
-                type: "trivia",
-                question: "¿En qué club de la MLS juega el astro Lionel Messi?",
-                correct: "Inter Miami CF",
-                incorrect: ["París Saint-Germain", "Barcelona F. C."]
-            },
-            {
-                id: 23,
-                type: "trivia",
-                question: "¿A qué club fue transferido el delantero Julián 'La Araña' Álvarez?",
-                correct: "Atlético de Madrid",
-                incorrect: ["Manchester City", "Real Madrid"]
-            },
-            {
-                id: 24,
-                type: "trivia",
-                question: "¿En qué histórico equipo italiano juega y es capitán Lautaro Martínez?",
-                correct: "Inter de Milán",
-                incorrect: ["A. C. Milan", "Juventus"]
-            },
-            {
-                id: 25,
-                type: "trivia",
-                question: "¿Con qué conocida cantante está de novio el jugador De Paul?",
-                correct: "Tini",
-                incorrect: ["Emilia", "Lali"]
-            },
-            {
-                id: 26,
-                type: "trivia",
-                question: "¿Qué número lleva en la camiseta el jugador De Paul en los mundiales?",
-                correct: "7",
-                incorrect: ["9", "6"]
-            },
-            {
-                id: 27,
-                type: "trivia",
-                question: "¿En qué provincia nació el jugador Ángel Di María?",
-                correct: "Santa Fe",
-                incorrect: ["Buenos Aires", "Córdoba"]
-            },
-            {
-                id: 28,
-                type: "trivia",
-                question: "¿En qué país se jugó el mundial 2014?",
-                correct: "Brasil",
-                incorrect: ["Rusia", "Sudáfrica"]
-            },
-            {
-                id: 29,
-                type: "trivia",
-                question: "¿Qué selección tiene mas mundiales ganados?",
-                correct: "Brasil",
-                incorrect: ["Alemania", "Italia"]
-            },
-            {
-                id: 30,
-                type: "trivia",
-                question: "¿La esposa de qué jugador participó en el reality Master Chef?",
-                correct: "Enzo Fernández",
-                incorrect: ["Lautaro Martínez", "Leandro Paredes"]
-            },
-            {
-                id: 31,
-                type: "trivia",
-                question: "¿En qué país se jugó el mundial 1930?",
-                correct: "Uruguay",
-                incorrect: ["Italia", "Suecia"]
-            },
-            {
-                id: 32,
-                type: "trivia",
-                question: "¿Qué selección eliminó a Brasil 7-1 en el mundial 2014?",
-                correct: "Alemania",
-                incorrect: ["Francia", "Países Bajos"]
-            },
-            {
-                id: 33,
-                type: "trivia",
-                question: "¿De qué barrio del partido de Avellaneda es oriundo el jugador De Paul?",
-                correct: "Sarandí",
-                incorrect: ["Wilde", "Villa Domínico"]
-            },
-            {
-                id: 34,
-                type: "trivia",
-                question: "¿Cuál fue el primer país africano en llegar a una semifinal en un mundial?",
-                correct: "Marruecos",
-                incorrect: ["Sudáfrica", "Senegal"]
-            },
-            {
-                id: 35,
-                type: "trivia",
-                question: "¿Cuál es el nombre de pila del jugador 'Huevo' Acuña?",
-                correct: "Marcos",
-                incorrect: ["Mauro", "Matías"]
-            },
-            {
-                id: 36,
-                type: "trivia",
-                question: "¿Cuántos mundiales ganó la selección italiana?",
-                correct: "4",
-                incorrect: ["3", "5"]
-            },
-            {
-                id: 37,
-                type: "trivia",
-                question: "¿En qué provincia nació el jugador Lionel Messi?",
-                correct: "Santa Fe",
-                incorrect: ["Buenos Aires", "Córdoba"]
-            },
-            {
-                id: 38,
-                type: "trivia",
-                question: "¿Cuál es el nombre de pila del jugador 'Cuti' Romero?",
-                correct: "Cristian",
-                incorrect: ["Andrés", "Carlos"]
-            },
-            {
-                id: 39,
-                type: "trivia",
-                question: "¿Qué jugador ganó el balón de oro en el mundial de Sudáfrica en 2010?",
-                correct: "Diego Forlán",
-                incorrect: ["Diego Godín", "Luis Suárez"]
-            },
-            {
-                id: 40,
-                type: "trivia",
-                question: "¿Qué selección perdió la final contra Argentina en el mundial de México en 1986?",
-                correct: "Alemania",
-                incorrect: ["Francia", "Bélgica"]
-            },
-            {
-                id: 41,
-                type: "trivia",
-                question: "¿Qué jugador uruguayo mordió a un rival en el mundial de Brasil en 2014?",
-                correct: "Luis Suárez",
-                incorrect: ["Edinson Cavani", "Diego Godín"]
-            },
-            {
-                id: 42,
-                type: "trivia",
-                question: "¿En qué mundial apareció por primera vez el VAR?",
-                correct: "2018",
-                incorrect: ["2014", "2022"]
-            },
-            {
-                id: 43,
-                type: "trivia",
-                question: "¿Cuántos mundiales ganó la selección alemana?",
-                correct: "4",
-                incorrect: ["3", "5"]
-            },
-            {
-                id: 44,
-                type: "trivia",
-                question: "¿En qué país se llevó a cabo el primer mundial?",
-                correct: "Uruguay",
-                incorrect: ["Italia", "Francia"]
-            }
+            { id: 1, type: "trivia", question: "¿A qué edad debutó Messi en la selección mayor Argentina?", correct: "18 años", incorrect: ["17 años", "21 años"] },
+            { id: 2, type: "trivia", question: "¿Qué selección ganó el Mundial de Qatar 2022?", correct: "Argentina", incorrect: ["Francia", "Croacia"] },
+            { id: 3, type: "trivia", question: "¿Cuál fue el equipo rival de Argentina en la final del mundial de 1978?", correct: "Países Bajos", incorrect: ["Italia", "Alemania"] },
+            { id: 4, type: "trivia", question: "¿Cuántas veces Argentina salió subcampeón en la copa mundial?", correct: "3", incorrect: ["2", "4"] },
+            { id: 5, type: "trivia", question: "¿Cómo se llaman los hijos de Messi?", correct: "Thiago, Mateo y Ciro", incorrect: ["Thiago, Mauro y Ciro", "Thiago, Marcos y Ciro"] },
+            { id: 6, type: "musica", audioFile: "francia98.mp3", respuestaCorta: "Mundial de Francia 98", detalles: "Canción: La copa de la vida<br>Artista: Ricky Martin" },
+            { id: 7, type: "musica", audioFile: "italia90.mp3", respuestaCorta: "Mundial Italia 90", detalles: "Canción: Un'estate italiana<br>Intérpretes: Edoardo Bennato y Gianna Nannini" },
+            { id: 8, type: "musica", audioFile: "sudafrica2010.mp3", respuestaCorta: "Mundial de Sudáfrica 2010", detalles: "Canción: Waka Waka<br>Artista: Shakira" },
+            { id: 9, type: "trivia", question: "¿En qué club juega actualmente Emiliano 'Dibu' Martínez?", correct: "Aston Villa", incorrect: ["Arsenal F. C.", "Manchester United"] },
+            { id: 10, type: "trivia", question: "¿En qué equipo de la Premier League se destaca Cristian 'Cuti' Romero?", correct: "Tottenham Hotspur", incorrect: ["Chelsea F. C.", "Manchester City"] },
+            { id: 11, type: "trivia", question: "¿Cuál es el club actual del defensor Nicolás Otamendi?", correct: "Benfica de Portugal", incorrect: ["Valencia C. F.", "Porto"] },
+            { id: 12, type: "trivia", question: "¿En qué equipo español milita actualmente el lateral Nahuel Molina?", correct: "Atlético de Madrid", incorrect: ["Real Betis", "Villarreal C. F."] },
+            { id: 13, type: "trivia", question: "¿A qué club de la liga francesa pertenece el defensor Nicolás Tagliafico?", correct: "Olympique de Lyon", incorrect: ["París Saint-Germain", "Olympique de Marsella"] },
+            { id: 14, type: "trivia", question: "¿En qué equipo de Inglaterra juega el mediocampista Enzo Fernández?", correct: "Chelsea F. C.", incorrect: ["Manchester City", "Liverpool F. C."] },
+            { id: 15, type: "trivia", question: "¿Cuál es el equipo actual de Rodrigo de Paul en los Estados Unidos?", correct: "Inter Miami CF", incorrect: ["Los Angeles Galaxy", "New York City FC"] },
+            { id: 16, type: "trivia", question: "¿En qué club inglés brilla actualmente Alexis Mac Allister?", correct: "Liverpool F. C.", incorrect: ["Brighton & Hove Albion", "Arsenal F. C."] },
+            { id: 17, type: "trivia", question: "¿En qué club juega el volante Leandro Paredes tras su regreso al fútbol argentino?", correct: "Club Atlético Boca Juniors", incorrect: ["Club Atlético River Plate", "Club Atlético San Lorenzo"] },
+            { id: 18, type: "trivia", question: "¿A qué equipo de la Liga de España pertenece actualmente Thiago Almada?", correct: "Atlético de Madrid", incorrect: ["Sevilla F. C.", "Real Sociedad"] },
+            { id: 19, type: "trivia", question: "¿En qué equipo de la Serie A italiana se destaca el joven Nicolás Paz?", correct: "Como 1907", incorrect: ["Real Madrid Castilla", "Fiorentina"] },
+            { id: 20, type: "trivia", question: "¿En qué club español milita actualmente el delantero Giuliano Simeone?", correct: "Atlético de Madrid", incorrect: ["Deportivo Alavés", "Getafe C. F."] },
+            { id: 21, type: "trivia", question: "¿Cuál es el club actual del delantero de la selección Nicolás González?", correct: "Atlético de Madrid", incorrect: ["Fiorentina", "Juventus"] },
+            { id: 22, type: "trivia", question: "¿En qué club de la MLS juega el astro Lionel Messi?", correct: "Inter Miami CF", incorrect: ["París Saint-Germain", "Barcelona F. C."] },
+            { id: 23, type: "trivia", question: "¿A qué club fue transferido el delantero Julián 'La Araña' Álvarez?", correct: "Atlético de Madrid", incorrect: ["Manchester City", "Real Madrid"] },
+            { id: 24, type: "trivia", question: "¿En qué histórico equipo italiano juega y es capitán Lautaro Martínez?", correct: "Inter de Milán", incorrect: ["A. C. Milan", "Juventus"] },
+            { id: 25, type: "trivia", question: "¿Con qué conocida cantante está de novio el jugador De Paul?", correct: "Tini", incorrect: ["Emilia", "Lali"] },
+            { id: 26, type: "trivia", question: "¿Qué número lleva en la camiseta el jugador De Paul en los mundiales?", correct: "7", incorrect: ["9", "6"] },
+            { id: 27, type: "trivia", question: "¿En qué provincia nació el jugador Ángel Di María?", correct: "Santa Fe", incorrect: ["Buenos Aires", "Córdoba"] },
+            { id: 28, type: "trivia", question: "¿En qué país se jugó el mundial 2014?", correct: "Brasil", incorrect: ["Rusia", "Sudáfrica"] },
+            { id: 29, type: "trivia", question: "¿Qué selección tiene mas mundiales ganados?", correct: "Brasil", incorrect: ["Alemania", "Italia"] },
+            { id: 30, type: "trivia", question: "¿La esposa de qué jugador participó en el reality Master Chef?", correct: "Enzo Fernández", incorrect: ["Lautaro Martínez", "Leandro Paredes"] },
+            { id: 31, type: "trivia", question: "¿En qué país se jugó el mundial 1930?", correct: "Uruguay", incorrect: ["Italia", "Suecia"] },
+            { id: 32, type: "trivia", question: "¿Qué selección cayó 7-1 ante Alemania en el mundial 2014?", correct: "Brasil", incorrect: ["Francia", "Países Bajos"] },
+            { id: 33, type: "trivia", question: "¿De qué barrio del partido de Avellaneda es oriundo el jugador De Paul?", correct: "Sarandí", incorrect: ["Wilde", "Villa Domínico"] },
+            { id: 34, type: "trivia", question: "¿Cuál fue el primer país africano en llegar a una semifinal en un mundial?", correct: "Marruecos", incorrect: ["Sudáfrica", "Senegal"] },
+            { id: 35, type: "trivia", question: "¿Cuál es el nombre de pila del jugador 'Huevo' Acuña?", correct: "Marcos", incorrect: ["Mauro", "Matías"] },
+            { id: 36, type: "trivia", question: "¿Cuántos mundiales ganó la selección italiana?", correct: "4", incorrect: ["3", "5"] },
+            { id: 37, type: "trivia", question: "¿En qué provincia nació el jugador Lionel Messi?", correct: "Santa Fe", incorrect: ["Buenos Aires", "Córdoba"] },
+            { id: 38, type: "trivia", question: "¿Cuál es el nombre de pila del jugador 'Cuti' Romero?", correct: "Cristian", incorrect: ["Andrés", "Carlos"] },
+            { id: 39, type: "trivia", question: "¿Qué jugador ganó el balón de oro en el mundial de Sudáfrica en 2010?", correct: "Diego Forlán", incorrect: ["Diego Godín", "Luis Suárez"] },
+            { id: 40, type: "trivia", question: "¿Qué selección perdió la final contra Argentina en el mundial de México en 1986?", correct: "Alemania", incorrect: ["Francia", "Bélgica"] },
+            { id: 41, type: "trivia", question: "¿Qué jugador uruguayo mordió a un rival en el mundial de Brasil en 2014?", correct: "Luis Suárez", incorrect: ["Edinson Cavani", "Diego Godín"] },
+            { id: 42, type: "trivia", question: "¿En qué mundial apareció por primera vez el VAR?", correct: "2018", incorrect: ["2014", "2022"] },
+            { id: 43, type: "trivia", question: "¿Cuántos mundiales ganó la selección alemana?", correct: "4", incorrect: ["3", "5"] },
+            { id: 44, type: "trivia", question: "¿En qué país se llevó a cabo el primer mundial?", correct: "Uruguay", incorrect: ["Italia", "Francia"] }
         ];
 
         let preguntasJugadas = []; 
